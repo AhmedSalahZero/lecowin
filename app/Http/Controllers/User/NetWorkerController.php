@@ -11,8 +11,10 @@ class NetWorkerController extends Controller
 
     public function index()
     {
-        return view('user.networker.index')->with('currentUser',Auth()->user()->load(['levels.finances'
-            ,'levels.users.networks.finance'
+        return view('user.networker.index')->with('currentUser',Auth()->user()->load(['levels.networks.netWorker'
         ]));
+//        return view('user.networker.index')->with('currentUser',Auth()->user()->load(['levels.finances'
+//            ,'levels.users.networks.finance','levels.networks.netWorker'
+//        ]));
     }
 }

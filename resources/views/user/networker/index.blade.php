@@ -40,9 +40,8 @@
 
     {{--Search--}}
 {{--    <div id="sample_1_filter" class="dataTables_filter"><label>Search:<input style="font-size: 17px" type="search" class="form-control input-sm input-small input-inline search_input" placeholder="" aria-controls="sample_1"></label></div>--}}
-    @foreach($currentUser->levelNetWorkers() as $levelNetWorker)
-
-    <button class="accordion active">Level  {{$levelNetWorker['level']->level}}</button>
+    @foreach($currentUser->levelNetWorkers() as $levelNetWork)
+    <button class="accordion active">Level  {{$levelNetWork['level']->level}}</button>
 
 
     <div class="panel" style="max-height:none;">
@@ -75,7 +74,7 @@
                             </div>
                             <div class="stat-number">
                                 <div class="title"> basicProfit </div>
-                                <div class="number"> {{$currentUser->CountLevelProfit($levelNetWorker['level'])}} </div>
+                                <div class="number"> {{$currentUser->CountLevelProfit($levelNetWork['level'])}} </div>
                             </div>
 
 
@@ -90,7 +89,7 @@
                             </div>
                             <div class="stat-number">
                                 <div class="title"> ForthProfit </div>
-                                <div class="number"> {{$currentUser->CountLevelForthCost($levelNetWorker['level'])}} </div>
+                                <div class="number"> {{$currentUser->CountLevelForthCost($levelNetWork['level'])}} </div>
                             </div>
 
 
@@ -105,7 +104,7 @@
                             </div>
                             <div class="stat-number">
                                 <div class="title"> totalProfit </div>
-                                <div class="number"> {{$currentUser->levelTotalProfit($levelNetWorker['level'])}} </div>
+                                <div class="number"> {{$currentUser->levelTotalProfit($levelNetWork['level'])}} </div>
                             </div>
                         </div>
                     </div>
@@ -117,7 +116,7 @@
                             </div>
                             <div class="stat-number">
                                 <div class="title"> members </div>
-                                <div class="number"> {{$currentUser->CountLevelNetWorkers($levelNetWorker['level'])}} </div>
+                                <div class="number"> {{$currentUser->CountLevelNetWorkers($levelNetWork['level'])}} </div>
                             </div>
                         </div>
                     </div>
@@ -130,24 +129,29 @@
                         <tr class="uppercase">
                             <th colspan="2"> MEMBER </th>
                             <th> cost </th>
-                            <th> Reason </th>
+{{--                            <th> Reason </th>--}}
                             <th> level </th>
                             <th> Join At </th>
 
                         </tr>
                         </thead>
-                        @foreach($levelNetWorker['networkers'] as $netWorker)
+                        @foreach($levelNetWork['networkers'] as $netWork)
+
                         <tbody>
                                 <tr>
                                     <td class="fit">
-                                        <img class="user-pic" src="{{asset('storage/'.$netWorker->image)}}"> </td>
+                                        <img class="user-pic" src="{{asset('storage/'.$netWork->netWorker->image)}}"> </td>
                                     <td>
-                                        <a href="javascript:;" class="primary-link">{{$netWorker->name}}</a>
+                                        <a href="javascript:;" class="primary-link">{{$netWork->netWorker->name}}</a>
                                     </td>
-                                    <td> {{$levelNetWorker['level']->assign_cost}} EGP </td>
-                                    <td>{{$netWorker->networks->where('level',$levelNetWorker['level']->level)->first()->finance->reason}}</td>
-                                    <td>{{$levelNetWorker['level']->level}}</td>
-                                    <td> {{format_date($netWorker->created_at)}} </td>
+
+                                    <td>
+                                        {{$netWork->finance ? $netWork->finance->amount .' EGP' : '0'}}
+
+                                    </td>
+{{--                                    <td>{{(($netWorker->networks->where('level',$levelNetWork['level']->level)->first())->finance)->reason}}</td>--}}
+                                    <td>{{$levelNetWork['level']->level}}</td>
+                                    <td> {{format_date($netWork->netWorker->created_at)}} </td>
                                 </tr>
                         </tbody>
                         @endforeach

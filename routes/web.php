@@ -34,16 +34,17 @@ Route::prefix('admin')->middleware('admin')->group(function()
 
 // Auth() [admin or user]
 
-Route::middleware('auth:web')->middleware('expiredAccount')->group(function (){
+Route::middleware(['auth:web','expiredAccount'])->group(function (){
+
     Route::get('/logout','Admin\logoutController@logout')->name('admin.logout');
-    Route::get('/account','user\AccountController@index')->name('account.index');
-    Route::get('/account/setting','user\AccountController@setting')->name('user.account.setting');
-    Route::post('/account/setting','user\AccountController@saveAccountInfo')->name('user.account.save');
+    Route::get('/account','User\AccountController@index')->name('account.index');
+    Route::get('/account/setting','User\AccountController@setting')->name('user.account.setting');
+    Route::post('/account/setting','User\AccountController@saveAccountInfo')->name('user.account.save');
     Route::post('/account/setting/changeProfileImage','user\AccountController@changeProfileImage')->name('user.account.change.image');
     Route::post('/account/setting/changeProfilePassword','user\AccountController@changeProfilePassword')->name('user.account.change.password');
     Route::get('/networkers','User\NetWorkerController@index')->name('user.networkers.show')->middleware('activatedUser');
-    Route::get('/libraries','User\homeController@show')->name('main.libraries.show');
-    Route::get('/libraries/{library}','User\homeController@showFile')->name('display.file');
+    Route::get('/libraries','User\HomeController@show')->name('main.libraries.show');
+    Route::get('/libraries/{library}','User\HomeController@showFile')->name('display.file');
     Route::resource('tasks' ,'User\tasksController');
     Route::get('/completedTask/{task}','User\tasksController@completedTask')->name('task.completed');
     Route::get('/archive/{task}','User\tasksController@archiveTask')->name('task.archive');
@@ -52,10 +53,5 @@ Route::middleware('auth:web')->middleware('expiredAccount')->group(function (){
     Route::get('userTransaction','User\TransactionsController@index')->name('user.transactions');
     Route::post('transfer-money','User\TransactionsController@transferMoney')->name('user.transfer.money');
     Route::get('/wallet','User\TransactionsController@wallet')->name('wallet.index');
+    Route::get('/','User\HomeController@index')->name('user.home');
 });
-
-Route::middleware('user:web')->group(function (){
-    Route::get('/','user\homeController@index')->name('user.home');
-});
-
-

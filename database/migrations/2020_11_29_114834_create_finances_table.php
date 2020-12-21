@@ -22,7 +22,7 @@ class CreateFinancesTable extends Migration
             $table->float('amount');
             $table->enum('reason',[
                 'assign' , 'outsource' ,'admin transfer','user transfer','activation by admin',
-                'activation by user'
+                'activation by user','forth'
             ]);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('network_id')->references('id')->on('networks');

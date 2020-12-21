@@ -10,6 +10,12 @@ class UsersController extends Controller
 {
     public function index()
     {
-        return view('admin.users.index')->with('users' , User::with(['parent','levels.users','finances'])->get());
+        return view('admin.users.index')->with('users' , User::with(['parent','levels.networks.finance'
+        ])->get());
+
+//        return view('admin.users.index')->with('users' , User::with(['parent','levels.networks.netWorker'
+//            ,'levels.networks.finance'
+//        ])->get());
+
     }
 }

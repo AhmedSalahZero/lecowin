@@ -29,6 +29,5 @@ class AppServiceProvider extends ServiceProvider
         App()->bind(User::class , function(){
             return Auth()->user();
         });
-
     }
 }

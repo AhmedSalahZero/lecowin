@@ -12,7 +12,7 @@ class RegisterController extends Controller
 {
     public function index()
     {
-        return view('Guest.register.index');
+        return view('guest.register.index');
     }
     public function store(RegisterStoreRequest $request)
     {

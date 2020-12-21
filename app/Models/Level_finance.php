@@ -20,6 +20,10 @@ class Level_finance extends Model
    {
        return $this->hasMany(Finance::class , 'level_id','id');
    }
+   public function networks()
+   {
+       return $this->hasMany(Network::class , 'level' , 'id');
+   }
    public static function countAllNetWorkers():Collection
    {
        return Level_finance::all()->load('users')->keyBy('level')->map(function($level){

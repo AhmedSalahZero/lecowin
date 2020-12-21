@@ -56,8 +56,6 @@
                                   </button>
                               </div>
                               <div class="modal-body">
-
-
                                   <form enctype="multipart/form-data" action="{{route('user.transfer.money') }}" method="post">
                                       @csrf
                                       <div class="row">
@@ -66,10 +64,7 @@
                                                   <div class="portlet-title">
                                                   </div>
                                                   <div class="portlet-body form">
-
                                                       <div class="form-body">
-
-
                                                           <div class="form-group">
                                                               <label for="email">Receiver Email</label>
                                                               <div class="input-icon">
@@ -80,7 +75,6 @@
                                                               <div class="input-icon">
                                                                   <input style="font-size: 17px;" type="number" class="form-control"  id="Phone" name="receiver_phone" value="{{old('receiver_phone')}}" > </div>
                                                           </div>
-
                                                           <div class="form-group">
                                                               <label for="amount">Amount</label>
                                                               <div class="input-icon">
@@ -93,8 +87,6 @@
                                                           </div>
                                                       </div>
                                                   </div>
-
-
                                               </div>
                                           </div>
                                       </div>
@@ -117,7 +109,69 @@
 
                   </div>
               </div>
+{{--user_found--}}
+              <div class="col-md-12 col-sm-12 " style="margin-bottom:10px;margin-top: 25px">
 
+
+                  <div class="modal fade" id="user_found" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                  </button>
+                              </div>
+                              <div class="modal-body">
+                                  <form enctype="multipart/form-data" action="{{route('user.transfer.money') }}" method="post">
+                                      @csrf
+                                      <div class="row">
+                                          <div class="col-md-12">
+                                              <div class="portlet light bordered">
+                                                  <div class="portlet-title">
+                                                  </div>
+                                                  <div class="portlet-body form">
+                                                      <div class="form-body">
+                                                          <div class="form-group">
+                                                              <label for="email">Receiver Email</label>
+                                                              <div class="input-icon">
+                                                                  <input style="font-size: 17px;" type="email" class="form-control"  id="email" name="receiver_email" value="{{old('receiver_email')}}" > </div>
+                                                          </div>
+                                                          <div class="form-group">
+                                                              <label for="Phone">Receiver Phone</label>
+                                                              <div class="input-icon">
+                                                                  <input style="font-size: 17px;" type="number" class="form-control"  id="Phone" name="receiver_phone" value="{{old('receiver_phone')}}" > </div>
+                                                          </div>
+                                                          <div class="form-group">
+                                                              <label for="amount">Amount</label>
+                                                              <div class="input-icon">
+                                                                  <input style="font-size: 17px;" type="number" class="form-control"  id="amount" name="amount" value="{{old('amount')}}" > </div>
+                                                          </div>
+                                                          <div class="form-group">
+                                                              <label for="password">Your password</label>
+                                                              <div class="input-icon">
+                                                                  <input style="font-size: 17px;" type="password" class="form-control"  id="password" name="password" value="" > </div>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                          <button  type="submit" class="btn btn-success "> Transfer </button>
+                                      </div>
+
+                                  </form>
+                              </div>
+
+                          </div>
+                      </div>
+                  </div>
+
+
+              </div>
+
+              {{--user_found--}}
               <div class="tools">
                   <a href="javascript:" class="collapse" data-original-title="" title=""> </a>
                   <a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>
@@ -355,6 +409,16 @@
 
     </style>
     <script>
+        {{--user_found--}}
+        {{
+    (session()->has('found_receiver')) ? "
+    $('#myModal').modal('show')
+    " : ""
+}}
+
+        {{--user_found--}}
+
+
         $(document).ready(function(){
             $('.dataTables_filter').on('keyup',function(){
                 let query = $('.search_input').val();
