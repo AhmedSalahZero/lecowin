@@ -725,7 +725,11 @@ class User extends Authenticatable
         {
             if($myParent->getMaxLevel() >= $myLevel)
                 return $myParent ;
-            return $this->getClosetParentWithEqualOrHigherLevel($myLevel , $myParent->parent,++$i);
+           else{
+               if($myParent->parent)
+                   return $this->getClosetParentWithEqualOrHigherLevel($myLevel , $myParent->parent,++$i);
+               return $this->getTheAdmin();
+           }
         }
         return $this->getTheAdmin();
     }
