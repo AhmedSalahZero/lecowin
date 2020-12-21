@@ -706,7 +706,6 @@ class User extends Authenticatable
         return $this->transactionsAsReceiver->sum('amount');
 
     }
-    // x
     public function logout()
     {
         Auth()->logout();
