@@ -721,16 +721,16 @@ class User extends Authenticatable
 
     protected function getClosetParentWithEqualOrHigherLevel($myLevel , $myParent,$i=1):model
     {
-        if($i <= 10)
-        {
-            if($myParent->getMaxLevel() >= $myLevel)
-                return $myParent ;
-           else{
-               if($myParent->parent)
-                   return $this->getClosetParentWithEqualOrHigherLevel($myLevel , $myParent->parent,++$i);
-               return $this->getTheAdmin();
-           }
+        if($i <= 10) {
+            if ($myParent->getMaxLevel() >= $myLevel)
+                return $myParent;
+            else {
+                if ($myParent->parent)
+                    return $this->getClosetParentWithEqualOrHigherLevel($myLevel, $myParent->parent, ++$i);
+                return $this->getTheAdmin();
+            }
         }
+        // good
         return $this->getTheAdmin();
     }
     protected function getTheAdmin()
