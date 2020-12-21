@@ -11,6 +11,8 @@ class NetWorkerController extends Controller
 
     public function index()
     {
+//        $mytime = \Carbon\Carbon::now();
+//        dd( $mytime->format('h A'));
         return view('user.networker.index')->with('currentUser',Auth()->user()->load(['levels.networks.netWorker'
         ]));
 //        return view('user.networker.index')->with('currentUser',Auth()->user()->load(['levels.finances'

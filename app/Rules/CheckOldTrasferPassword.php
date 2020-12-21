@@ -2,21 +2,19 @@
 
 namespace App\Rules;
 
-use App\Models\User;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 
-class validPasswordRule implements Rule
+class CheckOldTrasferPassword implements Rule
 {
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    protected $sender ;
-    public function __construct(User $sender)
+    public function __construct()
     {
-        $this->sender = $sender ;
+        //
     }
 
     /**
@@ -26,10 +24,11 @@ class validPasswordRule implements Rule
      * @param  mixed  $value
      * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value):bool
     {
-        return Hash::check($value,$this->sender->password);
+        return Hash::check($value,Request()->user()->transfer_password);
     }
+
     /**
      * Get the validation error message.
      *
@@ -37,7 +36,6 @@ class validPasswordRule implements Rule
      */
     public function message()
     {
-        return 'your account password is incorrect ! ';
-
+        return 'Your old transfer password is incorrect !';
     }
 }

@@ -2,21 +2,18 @@
 
 namespace App\Rules;
 
-use App\Models\User;
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Support\Facades\Hash;
 
-class validPasswordRule implements Rule
+class validReceiverCodeRule implements Rule
 {
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    protected $sender ;
-    public function __construct(User $sender)
+    public function __construct()
     {
-        $this->sender = $sender ;
+        //
     }
 
     /**
@@ -28,8 +25,14 @@ class validPasswordRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        return Hash::check($value,$this->sender->password);
+        if(str_starts_with($value,'A-') || str_starts_with($value,'a-'))
+        {
+            $numericPart = substr($value,2) ;
+            return is_numeric($numericPart);
+        }
+        return false;
     }
+
     /**
      * Get the validation error message.
      *
@@ -37,7 +40,6 @@ class validPasswordRule implements Rule
      */
     public function message()
     {
-        return 'your account password is incorrect ! ';
-
+        return 'valid code Receiver code ! .';
     }
 }

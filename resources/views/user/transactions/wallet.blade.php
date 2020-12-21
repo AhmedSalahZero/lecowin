@@ -111,8 +111,6 @@
                         </div>
                         <!-- END WIDGET THUMB -->
                     </div>
-
-
                     <div class="col-md-3">
                         <!-- BEGIN WIDGET THUMB -->
                         <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
@@ -127,10 +125,7 @@
                         </div>
                         <!-- END WIDGET THUMB -->
                     </div>
-
-
-
-                       @if($currentUser->isActivated())
+                       @if($currentUser->isActivated() && $currentUser->notAdmin())
                         <div class="col-md-3">
                             <!-- BEGIN WIDGET THUMB -->
                             <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">

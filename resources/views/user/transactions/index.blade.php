@@ -44,132 +44,149 @@
 
           <div class="portlet-title">
 
-              <div class="col-md-12 col-sm-12 " style="margin-bottom:10px;margin-top: 25px">
+             <div class="row">
+                 <div class="col-md-6 col-sm-6 " style="margin-bottom:10px;margin-top: 25px">
+                     <div class="modal fade " id="exampleModalLong_transfer_password" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                         <div class="modal-dialog" role="document">
+                             <div class="modal-content">
+                                 <div class="modal-header">
+                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                         <span aria-hidden="true">&times;</span>
+                                     </button>
+                                 </div>
+                                 <div class="modal-body">
+                                     <form enctype="multipart/form-data" action="{{route('change.transfer.password')}}" method="post">
+                                         @csrf
+                                         <div class="row">
+                                             <div class="col-md-12">
+                                                 <div class="portlet light bordered">
+                                                     <div class="portlet-title">
+                                                     </div>
+                                                     <div class="portlet-body form">
+                                                         <div class="form-body">
+
+                                                             @if($user->transfer_password)
+                                                                 <div class="form-group">
+                                                                     <label for="old_transfer_password">your old transfer password</label>
+                                                                     <div class="input-icon">
+                                                                         <input style="font-size: 17px;" type="password" class="form-control"  id="old_transfer_password" name="old_transfer_password" value="{{old('old_transfer_password')}}" > </div>
+                                                                 </div>
+
+                                                             @else
+                                                                 <div class="form-group">
+                                                                     <label for="account_password">your account password</label>
+                                                                     <div class="input-icon">
+                                                                         <input style="font-size: 17px;" type="password" class="form-control"  id="account_password" name="account_password" value="{{old('account_password')}}" > </div>
+                                                                 </div>
 
 
-                  <div class="modal fade " id="exampleModalLong6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                              <div class="modal-header">
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                  </button>
-                              </div>
-                              <div class="modal-body">
-                                  <form enctype="multipart/form-data" action="{{route('user.transfer.money') }}" method="post">
-                                      @csrf
-                                      <div class="row">
-                                          <div class="col-md-12">
-                                              <div class="portlet light bordered">
-                                                  <div class="portlet-title">
-                                                  </div>
-                                                  <div class="portlet-body form">
-                                                      <div class="form-body">
-                                                          <div class="form-group">
-                                                              <label for="email">Receiver Email</label>
-                                                              <div class="input-icon">
-                                                                  <input style="font-size: 17px;" type="email" class="form-control"  id="email" name="receiver_email" value="{{old('receiver_email')}}" > </div>
-                                                          </div>
-                                                          <div class="form-group">
-                                                              <label for="Phone">Receiver Phone</label>
-                                                              <div class="input-icon">
-                                                                  <input style="font-size: 17px;" type="number" class="form-control"  id="Phone" name="receiver_phone" value="{{old('receiver_phone')}}" > </div>
-                                                          </div>
-                                                          <div class="form-group">
-                                                              <label for="amount">Amount</label>
-                                                              <div class="input-icon">
-                                                                  <input style="font-size: 17px;" type="number" class="form-control"  id="amount" name="amount" value="{{old('amount')}}" > </div>
-                                                          </div>
-                                                          <div class="form-group">
-                                                              <label for="password">Your password</label>
-                                                              <div class="input-icon">
-                                                                  <input style="font-size: 17px;" type="password" class="form-control"  id="password" name="password" value="" > </div>
-                                                          </div>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                          <button  type="submit" class="btn btn-success "> Transfer </button>
-                                      </div>
+                                                                 @endif
+                                                             <div class="form-group">
+                                                                 <label for="new_transfer_password">new transfer password</label>
+                                                                 <div class="input-icon">
+                                                                     <input style="font-size: 17px;" type="password" class="form-control"  id="new_transfer_password" name="new_transfer_password" value="{{old('new_transfer_password')}}" > </div>
+                                                             </div>
+                                                             <div class="form-group">
+                                                                 <label for="confirm_new_transfer_password">Confirm your transfer password </label>
+                                                                 <div class="input-icon">
+                                                                     <input style="font-size: 17px;" type="password" class="form-control"  id="confirm_new_transfer_password" name="confirm_new_transfer_password" value="" > </div>
+                                                             </div>
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                         <div class="modal-footer">
+                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                             <button  type="submit" class="btn btn-success ">
+                                                 {{($user->transfer_password) ? "Edit transfer password": "add transfer password"}}
+                                             </button>
+                                         </div>
 
-                                  </form>
-                              </div>
+                                     </form>
+                                 </div>
 
-                          </div>
-                      </div>
-                  </div>
+                             </div>
+                         </div>
+                     </div>
 
-                  <div class="col-md-12 col-xs-12">
-                      <button type="submit" class="btn green pull-right"   data-toggle="modal" data-target="#exampleModalLong6" >
-                          <i class="fa fa-plus"></i> Transfer Money
-                      </button>
+                     <div class="col-md-6 col-xs-12">
+                         <button type="submit" class="btn green pull-left"   data-toggle="modal" data-target="#exampleModalLong_transfer_password" >
+                             <i class="fa fa-plus"></i>
+                             {{($user->transfer_password) ? "Edit transfer password": "add transfer password"}}
 
-                  </div>
-              </div>
+                         </button>
+
+                     </div>
+                 </div>
+
+
+
+
+                 <div class="col-md-6 col-sm-6 " style="margin-bottom:10px;margin-top: 25px">
+
+
+                     <div class="modal fade " id="exampleModalLong6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                         <div class="modal-dialog" role="document">
+                             <div class="modal-content">
+                                 <div class="modal-header">
+                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                         <span aria-hidden="true">&times;</span>
+                                     </button>
+                                 </div>
+                                 <div class="modal-body">
+                                     <form enctype="multipart/form-data" action="{{route('user.confirm.receiver') }}" method="post">
+                                         @csrf
+                                         <div class="row">
+                                             <div class="col-md-12">
+                                                 <div class="portlet light bordered">
+                                                     <div class="portlet-title">
+                                                     </div>
+                                                     <div class="portlet-body form">
+                                                         <div class="form-body">
+
+                                                             <div class="form-group">
+                                                                 <label for="receiver_code">Receiver Code</label>
+                                                                 <div class="input-icon">
+                                                                     <input style="font-size: 17px;" type="text" class="form-control"  id="receiver_code" name="receiver_code" value="{{old('receiver_code')}}" > </div>
+                                                             </div>
+                                                             <div class="form-group">
+                                                                 <label for="amount">Amount</label>
+                                                                 <div class="input-icon">
+                                                                     <input style="font-size: 17px;" type="number" class="form-control"  id="amount" name="amount" value="{{old('amount')}}" > </div>
+                                                             </div>
+                                                             <div class="form-group">
+                                                                 <label for="password">Your transaction Password </label>
+                                                                 <div class="input-icon">
+                                                                     <input style="font-size: 17px;" type="password" class="form-control"  id="password" name="password" value="" > </div>
+                                                             </div>
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                         <div class="modal-footer">
+                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                             <button  type="submit" class="btn btn-success "> Transfer </button>
+                                         </div>
+
+                                     </form>
+                                 </div>
+
+                             </div>
+                         </div>
+                     </div>
+
+                     <div class="col-md-6 col-xs-12 pull-right">
+                         <button type="submit" class="btn green pull-right"   data-toggle="modal" data-target="#exampleModalLong6" >
+                             <i class="fa fa-plus"></i> Transfer Money
+                         </button>
+
+                     </div>
+                 </div>
+             </div>
 {{--user_found--}}
-              <div class="col-md-12 col-sm-12 " style="margin-bottom:10px;margin-top: 25px">
 
-
-                  <div class="modal fade" id="user_found" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                              <div class="modal-header">
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                  </button>
-                              </div>
-                              <div class="modal-body">
-                                  <form enctype="multipart/form-data" action="{{route('user.transfer.money') }}" method="post">
-                                      @csrf
-                                      <div class="row">
-                                          <div class="col-md-12">
-                                              <div class="portlet light bordered">
-                                                  <div class="portlet-title">
-                                                  </div>
-                                                  <div class="portlet-body form">
-                                                      <div class="form-body">
-                                                          <div class="form-group">
-                                                              <label for="email">Receiver Email</label>
-                                                              <div class="input-icon">
-                                                                  <input style="font-size: 17px;" type="email" class="form-control"  id="email" name="receiver_email" value="{{old('receiver_email')}}" > </div>
-                                                          </div>
-                                                          <div class="form-group">
-                                                              <label for="Phone">Receiver Phone</label>
-                                                              <div class="input-icon">
-                                                                  <input style="font-size: 17px;" type="number" class="form-control"  id="Phone" name="receiver_phone" value="{{old('receiver_phone')}}" > </div>
-                                                          </div>
-                                                          <div class="form-group">
-                                                              <label for="amount">Amount</label>
-                                                              <div class="input-icon">
-                                                                  <input style="font-size: 17px;" type="number" class="form-control"  id="amount" name="amount" value="{{old('amount')}}" > </div>
-                                                          </div>
-                                                          <div class="form-group">
-                                                              <label for="password">Your password</label>
-                                                              <div class="input-icon">
-                                                                  <input style="font-size: 17px;" type="password" class="form-control"  id="password" name="password" value="" > </div>
-                                                          </div>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                          <button  type="submit" class="btn btn-success "> Transfer </button>
-                                      </div>
-
-                                  </form>
-                              </div>
-
-                          </div>
-                      </div>
-                  </div>
-
-
-              </div>
 
               {{--user_found--}}
               <div class="tools">

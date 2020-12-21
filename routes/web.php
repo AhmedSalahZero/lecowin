@@ -51,7 +51,10 @@ Route::middleware(['auth:web','expiredAccount'])->group(function (){
     Route::get('/archive','User\tasksController@getArchivedTasks')->name('get.archived.tasks');
     Route::post('/active/{user}','User\AccountController@activeMyAccount')->name('user.active');
     Route::get('userTransaction','User\TransactionsController@index')->name('user.transactions');
+    Route::post('userTransaction','User\TransactionsController@confirmReceiver')->name('user.confirm.receiver');
     Route::post('transfer-money','User\TransactionsController@transferMoney')->name('user.transfer.money');
     Route::get('/wallet','User\TransactionsController@wallet')->name('wallet.index');
     Route::get('/','User\HomeController@index')->name('user.home');
+    Route::post('change-transfer-password','User\AccountController@changeTransferPassword')->name('change.transfer.password');
+
 });

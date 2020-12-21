@@ -36,7 +36,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = ['name','email','password','rule_id','phone','address','passport_info','sub_of','image' ,'code','activated_at'];
+    protected $fillable = ['name','email','password','rule_id','phone','address','passport_info','sub_of','image' ,'code','activated_at','transfer_password'];
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -279,7 +279,10 @@ class User extends Authenticatable
 //            'level'=>$currentParentLevel+1   ,
 //        ]);
 //    }
-
+    protected function setTransferPasswordAttribute($value)
+    {
+        $this->attributes['transfer_password'] = Hash::make($value);
+    }
     public function rule():BelongsTo
     {
         return $this->belongsTo(Rule::class , 'rule_id' , 'id');
@@ -514,9 +517,8 @@ class User extends Authenticatable
         return $this->finances->sum('amount');
     }
 
-    protected function generateCode():string
+    public function generateCode():string
     {
-
         $idLength = strlen($this->id);
         $numberOfZeros = 7 - $idLength ;
         $zeros = str_repeat(0,$numberOfZeros);
@@ -676,9 +678,15 @@ class User extends Authenticatable
         $this->save();
         return true;
     }
-    public static function findReceiver(Request $request)
+//    public static function findReceiver(Request $request)
+//    {
+//       return User::where('receiver_code',$request->receiver_email)->where('phone',$request->receiver_phone)->first();
+//        return User::where('email',$request->receiver_email)->where('phone',$request->receiver_phone)->first();
+//    }
+    public static function getUserFromHisCode($code)
     {
-        return User::where('email',$request->receiver_email)->where('phone',$request->receiver_phone)->first();
+        $numericPart = (int) substr( $code,2);
+        return User::where('id',$numericPart)->first();
     }
     public function hasEnoughMoney():bool
     {
@@ -736,5 +744,9 @@ class User extends Authenticatable
     protected function getTheAdmin()
     {
         return User::where('rule_id' , 1)->first();
+    }
+    public function notAdmin()
+    {
+        return $this->rule_id == 2 ;
     }
 }

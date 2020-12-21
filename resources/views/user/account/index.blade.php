@@ -232,7 +232,7 @@ Account
                         </div>
                         <!-- END WIDGET THUMB -->
                     </div>
-                    @if(Auth()->user()->isActivated())
+                    @if(Auth()->user()->isActivated() && Auth()->user()->notAdmin())
                         <div class="col-md-3">
                             <!-- BEGIN WIDGET THUMB -->
                             <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
