@@ -31,7 +31,6 @@ class AppServiceProvider extends ServiceProvider
         App()->bind(User::class , function(){
             return Auth()->user();
         });
-
         $url = '/';
         foreach (request()->segments() as $key => $segment) {
             if ($key !== 0) {

@@ -4,25 +4,15 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\VerificationUser;
-use Illuminate\Http\Request;
-use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Request;
+
 
 class NetWorkerController extends Controller
 {
 
-
-
     public function index()
     {
-
-
-
-        return view('user.networker.index')->with('currentUser',Auth()->user()->load(['levels.networks.netWorker'
-        ]));
+        return view('user.networker.index')->with('currentUser',Auth()->user()->load(['levels.networks.netWorker']));
     }
     public function showLinear()
     {

@@ -44,7 +44,7 @@ Route::prefix('admin')->middleware('admin')->group(function()
 
 // Auth() [admin or user]
 
-Route::middleware(['auth:web','expiredAccount','localization'])->prefix('{lang}')->group(function (){
+Route::middleware(['auth:web','expiredAccount','localization','markAsVisited'])->prefix('{lang}')->group(function (){
 
     Route::get('/logout','Admin\logoutController@logout')->name('admin.logout');
 
@@ -76,6 +76,9 @@ Route::middleware(['auth:web','expiredAccount','localization'])->prefix('{lang}'
     Route::get('/networkers/my-parents','User\NetWorkerController@myParents')->name('user.networkers.show.my.parents')->middleware('activatedUser');
     Route::get('/networkers/my-children/{user}','User\NetWorkerController@myChildren')->name('user.networkers.show.my.children')->middleware('activatedUser');
     Route::post('/task/edit/{task}','User\tasksController@editWithAjax');
+    Route::get('myGoal','User\tasksController@goals')->name('tasks.goals');
+    Route::post('myGoal/store','User\tasksController@storeGoal')->name('tasks.goals.store'); //Ajax
+
 });
 Route::get('/profile/{code}','User\AccountController@index')->name('profile.index')->middleware('localization')->prefix('{lang}');
 Route::redirect('/','/en');

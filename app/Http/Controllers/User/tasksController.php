@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -84,5 +83,15 @@ class tasksController extends Controller
     public function calendar()
     {
         return view('user.tasks.calendar');
+    }
+    public function goals()
+    {
+        return view('user.tasks.goal');
+    }
+    public function storeGoal(Request $request)
+    {
+        $request->user()->update([
+            ''
+        ]);
     }
 }

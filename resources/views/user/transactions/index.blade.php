@@ -338,14 +338,14 @@
                                       <td class="hidden-xs"> {{ $ReceivedTransaction->amount}} </td>
                                       <td class="hidden-xs">
 
-                                          @if(($sentTransaction->reason) == 'user transfer' )
+                                          @if(($ReceivedTransaction->reason) == 'user transfer' )
                                               @lang('lang.user transfer')
-                                          @elseif($sentTransaction->reason == 'account activation')
+                                          @elseif($ReceivedTransaction->reason == 'account activation')
                                               @lang('lang.account activation')
-                                          @elseif($sentTransaction->reason == 'admin transfer')
+                                          @elseif($ReceivedTransaction->reason == 'admin transfer')
                                               @lang('lang.admin transfer')
                                           @else
-                                              {{$sentTransaction->reason}}
+                                              {{$ReceivedTransaction->reason}}
                                           @endif
 
                                       </td>

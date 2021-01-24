@@ -186,7 +186,8 @@ return [
     'Your Official Id (Identity Number)'=>'Your Official Id (Identity Number)' ,
     'You have to active your account to see this page'=>'You Have To Active Your Account To See This Page',
     'You have completed'=>'You have completed',
-    'of your account info ..  please completed your data'=>'Of Your Account Info ..Please Completed Your Data',
+    'of your account info ..  please completed your data'=>'Of Your Account Info ..Please Complete Your Data',
+    'of your account info'=>'Of Your Account Info' ,
     'complete it'=>'Complete It ',
     'You must have'=>'You must have' ,
     'EGP in your account'=>'EGP In Your Account',
@@ -209,7 +210,11 @@ return [
     'registration'=>'Registration Date' ,
     'training'=>'Training' ,
     'you have to insert all fields'=>'You Have To Insert All Fields',
-
-
-
+    'Please Visit Your NetWorkers Page'=>'Please Visit Your NetWorkers Page',
+    'Action'=>'Action',
+    'Please Visit Library Page'=>'Please Visit Library Page',
+    'Please Visit Tasks Page'=>'Please Visit Tasks Page',
+    'goal'=>'Goal',
+    'my goal'=>'My Goal',
+    'expected val'=>'Expected Money',
 ];

@@ -192,6 +192,7 @@ return [
     'You have to active your account to see this page'=>'يجب عليك تفعيل حسابك لرؤيتة هذه الصفحة',
     'You have completed'=>'لقد اكملت ',
     'of your account info ..  please completed your data'=>'من بيانات حسابك .. برجاء اكمال بياناتك' ,
+    'of your account info'=>'من بيانات حسابك' ,
     'complete it'=>'أكمل البينات',
     'EGP in your account'=>' جنية مصري في حسابك',
     'You must have'=>'يجب ان تمتلك ' ,
@@ -215,6 +216,14 @@ return [
     'registration'=>'سجل التدريب' ,
     'training'=>'التدريب' ,
     'you have to insert all fields'=>'يجب عليك ملئ جميع الحقول',
+    'Please Visit Your NetWorkers Page'=>'برجاء زيارة صفحة الفروع',
+    'Action'=>'الاجراء',
+    'Please Visit Library Page'=>'برجاء زيارة المكتبة',
+    'Please Visit Tasks Page'=>'برجاء زيارة صفحة المهام'
+
+
+
+
 
 
 ];

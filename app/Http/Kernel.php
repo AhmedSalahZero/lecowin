@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'activatedUser'=>\App\Http\Middleware\activedUser::class,
         'expiredAccount'=>\App\Http\Middleware\expiredAccount::class ,
         'localization'=>\App\Http\Middleware\Localization::class,
+        'markAsVisited'=>\App\Http\Middleware\MarkVisitPage::class
 
     ];
 }

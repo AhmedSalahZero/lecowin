@@ -805,8 +805,12 @@ $currentUser = Auth()->user();
 
                     </li>
 
-
-
+                    <li class="nav-item  goal_nav">
+                        <a href="{{Route('tasks.goals',App()->getLocale())}}" class="nav-link ">
+                            <i class="fa fa-soccer-ball-o"></i>
+                            <span class="title">@lang('lang.my goal')</span>
+                        </a>
+                    </li>
 
                 </ul>
 
@@ -987,15 +991,15 @@ $currentUser = Auth()->user();
 
                 @endif
 
-            @if(Auth()->user() && Auth()->user()->completedProfileInfoPercentage() != '100 %' && Auth()->user()->id != 1 && Request()->segment(3) != 'setting')
+{{--            @if(Auth()->user() && Auth()->user()->completedProfileInfoPercentage() != '100 %' && Auth()->user()->id != 1 && Request()->segment(3) != 'setting')--}}
 
-                <div class="alert alert-warning">
-                   <span>@lang('lang.You have completed') {{Auth()->user()->completedProfileInfoPercentage()}} @lang('lang.of your account info ..  please completed your data') </span>
-                    <a  href="{{route('user.account.setting',App()->getLocale())}}" class="btn btn-danger pull-right css_complete_data_a" >
-                        @lang('lang.complete it')
-                    </a>
-                </div>
-                @endif
+{{--                <div class="alert alert-warning">--}}
+{{--                   <span>@lang('lang.You have completed') {{Auth()->user()->completedProfileInfoPercentage()}} @lang('lang.of your account info ..  please completed your data') </span>--}}
+{{--                    <a  href="{{route('user.account.setting',App()->getLocale())}}" class="btn btn-danger pull-right css_complete_data_a" >--}}
+{{--                        @lang('lang.complete it')--}}
+{{--                    </a>--}}
+{{--                </div>--}}
+{{--                @endif--}}
             @yield('content')
 
 

@@ -23,8 +23,6 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
-use mysql_xdevapi\XSession;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class User extends Authenticatable
 {
@@ -44,8 +42,9 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = ['first_name' ,'last_name','email','password','rule_id','phone','address','passport_info','sub_of','image' ,'code',
-        'activated_at','transfer_password','WhatsApp','birthday','social_status','job','official_id'
+    protected $fillable = ['first_name' ,'last_name','email','password','rule_id','phone','address',
+        'passport_info','sub_of','image' ,'code', 'activated_at','transfer_password','WhatsApp',
+        'birthday','social_status','job','official_id','visits_pages'
     ];
     /**
      * The attributes that should be hidden for arrays.
@@ -76,7 +75,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime'
+
     ];
     protected $dates = [
         'activated_at' ,
@@ -575,8 +575,19 @@ class User extends Authenticatable
     return Auth()->user()->unreadNotifications->merge(
         User::notificationUser()->first()->notifications()->whereJsonContains('data',[
             'type'=>'public_notification'
-        ])->get()
-);
-
+        ])->get());
+    }
+    public function hasVisitedThisPage($pageName):bool
+    {
+        return in_array($pageName,explode(',',$this->visits_pages));
+    }
+    public function markPageAsVisited()
+    {
+        $this->visits_pages = $this->visits_pages .=Request()->segment(2).',' ;
+        $this->save();
+    }
+    public function isAdmin()
+    {
+        return $this->rule_id == 1 ;
     }
 }

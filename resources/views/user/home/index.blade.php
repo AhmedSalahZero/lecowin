@@ -126,54 +126,81 @@
                 </div>
             @endif
 
+               @if(!Auth()->user()->isAdmin())
                 <div class="col-md-12">
-                  <table class="table">
-                      <thead>
-                      <tr>
-                          <th> Action </th>
-                          <th>Completed</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr>
-                          <td>please 1</td>
-                          <td>good</td>
-                      </tr>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <td>#</td>
+                            <th> @lang('lang.Action') </th>
+                            <th>@lang('lang.completed')</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>@lang('lang.Please Visit Your NetWorkers Page')</td>
+                            <td>
+                                @if(Auth()->user()->hasVisitedThisPage('networkers'))
+                                    <i class="fa fa-check fa-lg" style="color: green"></i>
+                                @else
+                                    <i class="fa fa-times fa-lg" style="color: red"> </i>
+                                    @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>@lang('lang.Please Visit Library Page')</td>
+                            <td>
+                                @if(Auth()->user()->hasVisitedThisPage('networkers'))
+                                    <i class="fa fa-check fa-lg" style="color: green"></i>
+                                @else
+                                    <i class="fa fa-times fa-lg" style="color: red"> </i>
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>@lang('lang.Please Visit Tasks Page')</td>
+                            <td>
+                                @if(Auth()->user()->hasVisitedThisPage('tasks'))
+                                    <i class="fa fa-check fa-lg" style="color: green"></i>
+                                @else
+                                    <i class="fa fa-times fa-lg" style="color: red"> </i>
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            @if(Auth()->user()->completedProfileInfoPercentage() != '100 %')
+                            <td>
+                                    @lang('lang.You have completed') {{Auth()->user()->completedProfileInfoPercentage()}} @lang('lang.of your account info ..  please completed your data')
+                            </td>
+                                <td>
+                                        <i class="fa fa-times fa-lg" style="color: red"> </i>
+                                </td>
 
-                      </tbody>
-                  </table>
+                        @else
+                                <td>
+                                    @lang('lang.You have completed') {{Auth()->user()->completedProfileInfoPercentage()}} @lang('lang.of your account info')                                </td>
+                                <td>
+
+                                    <i class="fa fa-times fa-lg" style="color: red"> </i>
+
+                                </td>
+
+
+                            @endif
+
+
+                        </tr>
+
+                        </tbody>
+                    </table>
                 </div>
-            <div class="delete_it">
-               <form>
-                   <input onchange="fnx()" type="hidden" name="check_if_change" value="ahmed">
-                   <input type="text" name="check_if_changes" value="ahmed">
-               </form>
-            </div>
+                   @endif
+
         </div>
-        <script>
-            function fnx(myValue) {
-                $('#check_if_change').val(myValue)
-                    .trigger('change');
-            }
-
-            $(function(){
-                $('input[name="check_if_change"]').on('change',function(){
-                    console.log('changed hidden');
-                })
-            })
-            $('#check_if_change').change(function(){
-                console.log('changed');
-
-            })
-
-            $(function(){
-                $('input[name="check_if_changes"]').on('change',function(){
-                    console.log('changed text');
-                })
-            })
-
-        </script>
-
         <div class="row">
             <div class="col-md-12 col-sm-12">
                 <!-- BEGIN PORTLET-->
