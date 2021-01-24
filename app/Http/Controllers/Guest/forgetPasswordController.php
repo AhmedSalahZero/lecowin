@@ -19,16 +19,16 @@ class forgetPasswordController extends Controller
     public function store(Request $request)
     {
 
-        if($user = $this->findUser($request)){
+        if($this->findUser($request)){
             $token = $this->createPasswordResetToken($request);
             $this->sendResetEmail($request , $token);
-            return redirect()->back()->withErrors([
-                'success'=>'Reset link has been sent to your email .. check your mail inbox .. '
+            return redirect()->back()->with([
+                'success'=>trans('lang.Reset link has been sent to your email .. check your mail inbox ..')
             ]);
         }
             else{
                 return redirect()->back()->withErrors([
-                    'email'=>'This email does not exist in our records .. '
+                    'email'=>trans('lang.This email does not exist in our records ..')
                 ]);
             }
     }

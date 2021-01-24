@@ -65,6 +65,8 @@ class Kernel extends HttpKernel
         'admin'=>\App\Http\Middleware\CheckIfAdmin::class,
         'user'=>\App\Http\Middleware\UserOnly::class,
         'activatedUser'=>\App\Http\Middleware\activedUser::class,
-        'expiredAccount'=>\App\Http\Middleware\expiredAccount::class
+        'expiredAccount'=>\App\Http\Middleware\expiredAccount::class ,
+        'localization'=>\App\Http\Middleware\Localization::class,
+
     ];
 }

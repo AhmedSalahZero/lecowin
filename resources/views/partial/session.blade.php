@@ -4,9 +4,9 @@
     </div>
 @endif
 
-@if(session()->has('fail'))
+@if(session()->has('fail') || session()->has('errors'))
     <div class="alert alert-danger text-center" role="alert">
-        <strong>Notice! </strong>  {{session()->get('fail')}}
+        <strong>Notice! </strong>  {{(session()->get('fail')) ? session()->get('fail') : session()->get('errors')->first()}}
     </div>
 @endif
 

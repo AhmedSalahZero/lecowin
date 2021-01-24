@@ -25,9 +25,9 @@ class validReceiverCodeRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        if(str_starts_with($value,'A-') || str_starts_with($value,'a-'))
+        if(str_starts_with($value,'AE-') || str_starts_with($value,'ae-') || str_starts_with($value,'aE-') || str_starts_with($value,'aE-') )
         {
-            $numericPart = substr($value,2) ;
+            $numericPart = substr($value,3) ;
             return is_numeric($numericPart);
         }
         return false;

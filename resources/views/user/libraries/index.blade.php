@@ -1,7 +1,7 @@
 @extends('user.layout.index')
 
 @section('title')
-    Dashboard
+    @lang('lang.dashboard')
 @endsection
 @section('header')
 
@@ -151,7 +151,7 @@
 
 
 @section('content')
-
+    @include('partial.toaster')
     <div class="content">
         <ul class="rig columns-4">
           @foreach($libraries as $library)
@@ -171,10 +171,10 @@
 {{--                    <span style="text-decoration: line-through; color:red;">$1,399.99</span>--}}
                     <hr>
                     <a target="_blank" href="{{asset('storage/'.$library->pdf)}}" class="btn btn-default btn-xs pull-right" type="button">
-                        <i class="fa fa-arrow-down"></i> Download
+                        <i class="fa fa-arrow-down"></i> @lang('lang.Download')
                     </a>
-                    <a target="_blank" href="{{route('display.file',$library->id)}}" class="btn btn-default btn-xs pull-left" type="button">
-                        <i class="fa fa-eye"></i> Preview
+                    <a target="_blank" href="{{route('display.file',[App()->getLocale(),$library->id])}}" class="btn btn-default btn-xs pull-left" type="button">
+                        <i class="fa fa-eye"></i> @lang('lang.Preview')
                     </a>
                 </li>
 

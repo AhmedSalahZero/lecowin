@@ -28,11 +28,11 @@ class RegisterStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=>'required|max:255',
+            'first_name'=>'required|max:255',
+            'last_name'=>'required|max:255',
             'email'=>'required|email|unique:users,email' ,
             'address'=>'required|max:255',
             'phone'=>'required|numeric',
-//            'passport_info'=>'required|image|mimes:jpg,jpeg,bmp,png',
             'password'=>['required','max:255'],
             'confirm_password'=>['required',new confirmPasswordRule(Request()->password)] ,
             'parentCode'=>['required',new confirmParentCodeRule() ] ,
@@ -41,8 +41,10 @@ class RegisterStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required'=>'You have to enter your name' ,
-            'name.max'=>'too large letters ! '  ,
+            'first_name.required'=>'You have to enter your first name' ,
+            'first_name.max'=>'too large letters ! '  ,
+            'last_name.required'=>'You have to enter your last name' ,
+            'last_name.max'=>'too large letters ! '  ,
             'email.required'=>'you have to insert your email' ,
             'email.email'=>'invalid email' ,
             'email.unique'=>'This email already exists' ,

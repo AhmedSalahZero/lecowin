@@ -1,16 +1,16 @@
 @extends('user.layout.index')
 
 @section('title')
-    transactions
+    @lang('lang.transactions')
 @endsection
 @section('inside_title')
-    transactions
+{{--    transactions--}}
 @endsection
 @section('header_link')
 
 
     <li>
-        <span>transactions</span>
+        <span>  @lang('lang.transactions')</span>
     </li>
 @endsection
 
@@ -38,7 +38,7 @@
 @section('content')
     @include('partial.toaster')
 
-    <div id="sample_1_filter" class="dataTables_filter"><label>Search:<input style="font-size: 17px" type="search" class="form-control input-sm input-small input-inline search_input" placeholder="" aria-controls="sample_1"></label></div>
+{{--    <div id="sample_1_filter" class="dataTables_filter"><label>Search:<input style="font-size: 17px" type="search" class="form-control input-sm input-small input-inline search_input" placeholder="" aria-controls="sample_1"></label></div>--}}
 
 
 
@@ -55,7 +55,7 @@
                                      </button>
                                  </div>
                                  <div class="modal-body">
-                                     <form enctype="multipart/form-data" action="{{route('change.transfer.password')}}" method="post">
+                                     <form enctype="multipart/form-data" action="{{route('change.transfer.password',App()->getLocale())}}" method="post">
                                          @csrf
                                          <div class="row">
                                              <div class="col-md-12">
@@ -67,14 +67,14 @@
 
                                                              @if($user->transfer_password)
                                                                  <div class="form-group">
-                                                                     <label for="old_transfer_password">your old transfer password</label>
+                                                                     <label for="old_transfer_password">@lang('lang.your old transfer password')</label>
                                                                      <div class="input-icon">
                                                                          <input style="font-size: 17px;" type="password" class="form-control"  id="old_transfer_password" name="old_transfer_password" value="{{old('old_transfer_password')}}" > </div>
                                                                  </div>
 
                                                              @else
                                                                  <div class="form-group">
-                                                                     <label for="account_password">your account password</label>
+                                                                     <label for="account_password">@lang('lang.your account password')</label>
                                                                      <div class="input-icon">
                                                                          <input style="font-size: 17px;" type="password" class="form-control"  id="account_password" name="account_password" value="{{old('account_password')}}" > </div>
                                                                  </div>
@@ -82,12 +82,12 @@
 
                                                                  @endif
                                                              <div class="form-group">
-                                                                 <label for="new_transfer_password">new transfer password</label>
+                                                                 <label for="new_transfer_password">@lang('lang.new transfer password')</label>
                                                                  <div class="input-icon">
                                                                      <input style="font-size: 17px;" type="password" class="form-control"  id="new_transfer_password" name="new_transfer_password" value="{{old('new_transfer_password')}}" > </div>
                                                              </div>
                                                              <div class="form-group">
-                                                                 <label for="confirm_new_transfer_password">Confirm your transfer password </label>
+                                                                 <label for="confirm_new_transfer_password"> @lang('lang.Confirm your transfer password')</label>
                                                                  <div class="input-icon">
                                                                      <input style="font-size: 17px;" type="password" class="form-control"  id="confirm_new_transfer_password" name="confirm_new_transfer_password" value="" > </div>
                                                              </div>
@@ -97,9 +97,9 @@
                                              </div>
                                          </div>
                                          <div class="modal-footer">
-                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('lang.close')</button>
                                              <button  type="submit" class="btn btn-success ">
-                                                 {{($user->transfer_password) ? "Edit transfer password": "add transfer password"}}
+                                                 {{($user->transfer_password) ? trans('lang.Edit Transfer Password'): trans('lang.Add Transfer Password')}}
                                              </button>
                                          </div>
 
@@ -110,14 +110,6 @@
                          </div>
                      </div>
 
-                     <div class="col-md-6 col-xs-12">
-                         <button type="submit" class="btn green pull-left"   data-toggle="modal" data-target="#exampleModalLong_transfer_password" >
-                             <i class="fa fa-plus"></i>
-                             {{($user->transfer_password) ? "Edit transfer password": "add transfer password"}}
-
-                         </button>
-
-                     </div>
                  </div>
 
 
@@ -135,28 +127,31 @@
                                      </button>
                                  </div>
                                  <div class="modal-body">
-                                     <form enctype="multipart/form-data" action="{{route('user.confirm.receiver') }}" method="post">
+                                     <form enctype="multipart/form-data" action="{{route('user.confirm.receiver',App()->getLocale()) }}" method="post">
                                          @csrf
                                          <div class="row">
                                              <div class="col-md-12">
                                                  <div class="portlet light bordered">
                                                      <div class="portlet-title">
+                                                         <div class="alert alert-danger">
+                                                             @lang('lang.Not That : Admin Will Get 10% Of The Transaction Money')
+                                                         </div>
                                                      </div>
                                                      <div class="portlet-body form">
                                                          <div class="form-body">
 
                                                              <div class="form-group">
-                                                                 <label for="receiver_code">Receiver Code</label>
+                                                                 <label for="receiver_code">@lang('lang.Receiver Code')</label>
                                                                  <div class="input-icon">
                                                                      <input style="font-size: 17px;" type="text" class="form-control"  id="receiver_code" name="receiver_code" value="{{old('receiver_code')}}" > </div>
                                                              </div>
                                                              <div class="form-group">
-                                                                 <label for="amount">Amount</label>
+                                                                 <label for="amount">@lang('lang.Amount')</label>
                                                                  <div class="input-icon">
                                                                      <input style="font-size: 17px;" type="number" class="form-control"  id="amount" name="amount" value="{{old('amount')}}" > </div>
                                                              </div>
                                                              <div class="form-group">
-                                                                 <label for="password">Your transaction Password </label>
+                                                                 <label for="password">@lang('lang.Your transaction Password') </label>
                                                                  <div class="input-icon">
                                                                      <input style="font-size: 17px;" type="password" class="form-control"  id="password" name="password" value="" > </div>
                                                              </div>
@@ -166,8 +161,8 @@
                                              </div>
                                          </div>
                                          <div class="modal-footer">
-                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                             <button  type="submit" class="btn btn-success "> Transfer </button>
+                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('lang.close')</button>
+                                             <button  type="submit" class="btn btn-success "> @lang('lang.Transfer') </button>
                                          </div>
 
                                      </form>
@@ -177,9 +172,16 @@
                          </div>
                      </div>
 
-                     <div class="col-md-6 col-xs-12 pull-right">
+                     <div class="col-md-12 col-xs-12">
+
+
+                         <button type="submit" class="btn green pull-right"  style="margin-left: 5px" data-toggle="modal" data-target="#exampleModalLong_transfer_password" >
+                             <i class="fa fa-plus"></i>
+                             {{($user->transfer_password) ? trans('lang.Edit Transfer Password'): trans('lang.Add Transfer Password')}}
+
+                         </button>
                          <button type="submit" class="btn green pull-right"   data-toggle="modal" data-target="#exampleModalLong6" >
-                             <i class="fa fa-plus"></i> Transfer Money
+                             <i class="fa fa-plus"></i> @lang('lang.Transfer Money')
                          </button>
 
                      </div>
@@ -203,11 +205,7 @@
 
 
                   <div class="table-scrollable">
-                      <div class="col-md-7" >
-                          <div  class="pull-right"  >
-                              <div class="alert alert-warning pull-left" style="text-align: center;color: black;"> Sent Money </div>
-                          </div>
-                      </div>
+                              <div class="alert alert-warning " style="text-align: center;color: black;background-color: #2B3643 ; color:white"> @lang('lang.Sent Money') </div>
 
                       <table class="table table-striped table-bordered table-advance table-hover">
                           <thead>
@@ -215,12 +213,12 @@
                               <th>
                                   <i class="fa fa-briefcase"></i> # </th>
                               <th>
-                                  <i class="fa fa-briefcase"></i> Receiver </th>
+                                  <i class="fa fa-briefcase"></i> @lang('lang.Receiver') </th>
                               <th class="hidden-xs">
-                                  <i class="fa fa-user"></i> amount </th>
+                                  <i class="fa fa-user"></i> @lang('lang.amount') </th>
                               <th class="hidden-xs">
-                                  <i class="fa fa-user"></i> reason </th>
-                              <th> details </th>
+                                  <i class="fa fa-user"></i> @lang('lang.reason') </th>
+                              <th> @lang('lang.details') </th>
                           </tr>
                           </thead>
                           <tbody>
@@ -228,12 +226,26 @@
                               @foreach($user->transactionsAsSender as $sentTransaction)
                                   <tr >
                                       <td>{{$sentTransaction->id}}</td>
-                                      <td class="hidden-xs"> {{  $sentTransaction->receiver->name}}</td>
+                                      <td class="hidden-xs"> {{  $sentTransaction->receiver->first_name. ' ' . $sentTransaction->receiver->last_name}}</td>
                                       <td class="hidden-xs"> {{  $sentTransaction->amount}} </td>
-                                      <td class="hidden-xs"> {{  $sentTransaction->reason}} </td>
+                                      <td class="hidden-xs">
+                                          @if(($sentTransaction->reason) == 'user transfer' )
+                                              @lang('lang.user transfer')
+
+                                          @elseif($sentTransaction->reason == 'account activation')
+                                              @lang('lang.account activation')
+                                          @elseif($sentTransaction->reason == 'admin transfer')
+                                              @lang('lang.admin transfer')
+
+                                          @else
+                                              {{$sentTransaction->reason}}
+
+                                              @endif
+
+                                      </td>
                                       <td>
                                           <button  class="btn btn-outline btn-circle dark btn-sm black" data-toggle="modal" data-target="#exampleModalLong2{{$sentTransaction->id}}">
-                                              <i class="fa fa-eye" id="sub_fom_data"></i> details
+                                              <i class="fa fa-eye" id="sub_fom_data"></i> @lang('lang.details')
                                           </button>
                                       </td>
 
@@ -243,21 +255,22 @@
                                       <div class="modal-dialog" role="document">
                                           <div class="modal-content">
                                               <div class="modal-header">
+
                                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                       <span aria-hidden="true">&times;</span>
                                                   </button>
                                               </div>
                                               <div class="modal-body">
 
-                                                  <h4>  receiver Name  : {{$sentTransaction->receiver->name}}  </h4>
-                                                  <h4>   receiver Email : {{$sentTransaction->receiver->email}}  </h4>
-                                                  <h4>   receiver Phone : {{$sentTransaction->receiver->phone}}  </h4>
-                                                  <h4>   Amount         : {{$sentTransaction->amount}} EGP  </h4>
-                                                  <h4>   date           : {{format_date($sentTransaction->created_at)}} </h4>
+                                                  <h4>  @lang('lang.receiver Name')  : {{$sentTransaction->receiver->first_name . ' ' . $sentTransaction->receiver->last_name}}  </h4>
+                                                  <h4>   @lang('lang.receiver Email') : {{$sentTransaction->receiver->email}}  </h4>
+                                                  <h4>   @lang('lang.receiver Phone') : {{$sentTransaction->receiver->phone}}  </h4>
+                                                  <h4>     @lang('lang.Amount')     : {{$sentTransaction->amount}} @lang('lang.egp')  </h4>
+                                                  <h4>   @lang('lang.date')           : {{format_date($sentTransaction->created_at)}} </h4>
                                               </div>
                                               <div class="modal-footer">
 
-                                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('lang.close')</button>
                                               </div>
                                           </div>
                                       </div>
@@ -271,7 +284,7 @@
                               <tr >
                                   <th colspan="7" >
                                       <div class="alert alert-info" style="text-align: center">
-                                          <strong>you did not send any money till now ! </strong>
+                                          <strong>@lang('lang.you did not send any money till now !') </strong>
                                       </div>
                                   </th>
                               </tr>
@@ -294,12 +307,9 @@
 
 
               <div class="portlet-body">
-                  <div class="table-scrollable">
-                      <div class="col-md-7" >
-                          <div  class="pull-right"  >
-                              <div class="alert alert-success pull-left" style="text-align: center;color: black;"> Received Money  </div>
-                          </div>
-                      </div>
+
+                              <div class="alert alert-success" style="text-align: center;background-color: #2B3643;color:#fff"> @lang('lang.Received Money')  </div>
+
 
                       <table class="table table-striped table-bordered table-advance table-hover">
                           <thead>
@@ -307,13 +317,13 @@
                               <th>
                                   <i class="fa fa-briefcase"></i> # </th>
                               <th>
-                                  <i class="fa fa-briefcase"></i> sender </th>
+                                  <i class="fa fa-briefcase"></i> @lang('lang.sender') </th>
                               <th class="hidden-xs">
-                                  <i class="fa fa-user"></i> amount </th>
+                                  <i class="fa fa-user"></i> @lang('lang.amount') </th>
                               <th class="hidden-xs">
-                                  <i class="fa fa-sticky-note"></i> reason </th>
+                                  <i class="fa fa-sticky-note"></i> @lang('lang.reason') </th>
 
-                              <th> details </th>
+                              <th> @lang('lang.details') </th>
                           </tr>
                           </thead>
                           <tbody>
@@ -324,12 +334,24 @@
                               @foreach($user->transactionsAsReceiver as $ReceivedTransaction)
                                   <tr >
                                       <td>{{$ReceivedTransaction->id}}</td>
-                                      <td class="hidden-xs"> {{  $ReceivedTransaction->sender->name}}</td>
+                                      <td class="hidden-xs"> {{  $ReceivedTransaction->sender->first_name . ' ' . $ReceivedTransaction->sender->last_name}}</td>
                                       <td class="hidden-xs"> {{ $ReceivedTransaction->amount}} </td>
-                                      <td class="hidden-xs"> {{ $ReceivedTransaction->reason}} </td>
+                                      <td class="hidden-xs">
+
+                                          @if(($sentTransaction->reason) == 'user transfer' )
+                                              @lang('lang.user transfer')
+                                          @elseif($sentTransaction->reason == 'account activation')
+                                              @lang('lang.account activation')
+                                          @elseif($sentTransaction->reason == 'admin transfer')
+                                              @lang('lang.admin transfer')
+                                          @else
+                                              {{$sentTransaction->reason}}
+                                          @endif
+
+                                      </td>
                                       <td>
                                           <button  class="btn btn-outline btn-circle dark btn-sm black" data-toggle="modal" data-target="#exampleModalLong_received{{$ReceivedTransaction->id}}">
-                                              <i class="fa fa-eye" id="sub_fom_data"></i> details
+                                              <i class="fa fa-eye" id="sub_fom_data"></i> @lang('lang.details')
                                           </button>
                                       </td>
 
@@ -345,16 +367,16 @@
                                               <div class="modal-body">
                                                   <div class="modal-body">
 
-                                                      <h4> sender Name  : {{$ReceivedTransaction->sender->name}}  </h4>
-                                                      <h4> sender Email : {{$ReceivedTransaction->sender->email}}  </h4>
-                                                      <h4> sender Phone : {{$ReceivedTransaction->sender->phone}}  </h4>
-                                                      <h4> Amount         : {{$ReceivedTransaction->amount}} EGP  </h4>
-                                                      <h4> date           : {{format_date($ReceivedTransaction->created_at)}} </h4>
+                                                      <h4>  @lang('lang.sender Name') : {{$ReceivedTransaction->sender->first_name . ' ' . $ReceivedTransaction->sender->last_name}}  </h4>
+                                                      <h4> @lang('lang.sender Email') : {{$ReceivedTransaction->sender->email}}  </h4>
+                                                      <h4> @lang('lang.sender Phone') : {{$ReceivedTransaction->sender->phone}}  </h4>
+                                                      <h4> @lang('lang.Amount')         : {{$ReceivedTransaction->amount}} @lang('lang.egp')  </h4>
+                                                      <h4> @lang('lang.date')           : {{format_date($ReceivedTransaction->created_at)}} </h4>
                                                   </div>
 
                                               </div>
                                               <div class="modal-footer">
-                                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('lang.close')</button>
                                               </div>
                                           </div>
                                       </div>
@@ -367,7 +389,7 @@
                               <tr >
                                   <th colspan="6" >
                                       <div class="alert alert-info" style="text-align: center">
-                                          <strong>There is no Received Money til now !</strong>
+                                          <strong>@lang('lang.There is no Received Money til now !')</strong>
                                       </div>
                                   </th>
                               </tr>
@@ -384,13 +406,6 @@
               </div>
           </div>
         </div>
-
-
-
-
-
-
-    {{--models--}}
 
 
 
@@ -427,43 +442,43 @@
     </style>
     <script>
         {{--user_found--}}
-        {{
-    (session()->has('found_receiver')) ? "
-    $('#myModal').modal('show')
-    " : ""
-}}
+{{--        {{--}}
+{{--    (session()->has('found_receiver')) ? "--}}
+{{--    $('#myModal').modal('show')--}}
+{{--    " : ""--}}
+{{--}}--}}
 
         {{--user_found--}}
 
 
-        $(document).ready(function(){
-            $('.dataTables_filter').on('keyup',function(){
-                let query = $('.search_input').val();
-                if(query ==='')
-                {
-                    $('.all_data').show();
-                    return ;
-                }
-                query = query.split(' ').join('%');
-                console.log(query);
-                let lang="{{App()->getLocale()}}";
-                $.ajax({
-                        type:'get',
-                        url:`/${lang}/adminPanel/filterusers/${query}`,
-                        beforeSend:function (){
+        {{--$(document).ready(function(){--}}
+        {{--    $('.dataTables_filter').on('keyup',function(){--}}
+        {{--        let query = $('.search_input').val();--}}
+        {{--        if(query ==='')--}}
+        {{--        {--}}
+        {{--            $('.all_data').show();--}}
+        {{--            return ;--}}
+        {{--        }--}}
+        {{--        query = query.split(' ').join('%');--}}
+        {{--        console.log(query);--}}
+        {{--        let lang="{{App()->getLocale()}}";--}}
+        {{--        $.ajax({--}}
+        {{--                type:'get',--}}
+        {{--                url:`/${lang}/adminPanel/filterusers/${query}`,--}}
+        {{--                beforeSend:function (){--}}
 
-                        },
-                        success:function(data){
-                            $('.all_data').hide();
-                            $('.searched_data').empty().append(data.searchData);
+        {{--                },--}}
+        {{--                success:function(data){--}}
+        {{--                    $('.all_data').hide();--}}
+        {{--                    $('.searched_data').empty().append(data.searchData);--}}
 
 
 
-                        }
-                    }
-                )
-            })
-        });
+        {{--                }--}}
+        {{--            }--}}
+        {{--        )--}}
+        {{--    })--}}
+        {{--});--}}
     </script>
     <script>
         $('li').removeClass('active');

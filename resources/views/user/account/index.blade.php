@@ -2,27 +2,26 @@
 
 
 @section('title')
-     account
+     @lang('lang.Account')
 @endsection
 
 
 @section('inside_title')
 
-Account
+{{--Account--}}
 
 @endsection
 @section('header_link')
     <li>
-        <a href="{{Route('account.index')}}">Account </a>
-        <i class="fa fa-circle"></i>
+      @if(Auth()->check())
+            <a href="{{Route('profile.index',[App()->getLocale(),(Auth()->check() ?Auth()->user()->generateCode() : Request()->segment(3))])}}">@lang('lang.Account') </a>
+            <i class="fa fa-circle"></i>
+
+        @endif
     </li>
 
     <li>
-        @if(isset($account))
-            <span>Edit account</span>
-        @else
-            <span>Create account</span>
-        @endif
+
     </li>
 @endsection
 @section('header')
@@ -46,29 +45,29 @@ Account
     <link href="{{asset('assets/layouts/layout/css/themes/darkblue.min.css')}}" rel="stylesheet" type="text/css" id="style_color" />
     <link href="{{asset('assets/layouts/layout/css/custom.min.css')}}" rel="stylesheet" type="text/css" />
     <!-- END THEME LAYOUT STYLES -->
-{{--    <link rel="shortcut icon" href="{{asset('favicon.ico')}}" />--}}
+    <link rel="shortcut icon" href="{{asset('favicon.ico')}}" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 
 
 
-
 @endsection
 
+
 @section('inside_title')
-    User Profile
+{{--    User Profile--}}
 @endsection
 @section('content')
 
 @include('partial.toaster')
-    <div class="alert alert-danger" style="display: none;text-align: center">
-        <strong id="fail_message_id">  </strong>
-    </div>
+{{--    <div class="alert alert-danger" style="display: none;text-align: center">--}}
+{{--        <strong id="fail_message_id">  </strong>--}}
+{{--    </div>--}}
 {{--    <div class="alert alert-success insert_success" style="display: none;text-align: center">--}}
 {{--        <strong>Success! The account has been Created successfully.</strong>--}}
 {{--    </div>--}}
-    <div class="alert alert-success updated_success" style="display: none;text-align: center">
-        <strong>Success! The account has been Updated successfully.</strong>
-    </div>
+{{--    <div class="alert alert-success updated_success" style="display: none;text-align: center">--}}
+{{--        <strong>Success! The account has been Updated successfully.</strong>--}}
+{{--    </div>--}}
     <div class="row">
         <div class="col-md-12">
             <!-- BEGIN PROFILE SIDEBAR -->
@@ -83,20 +82,28 @@ Account
             <!-- END SIDEBAR USERPIC -->
                 <!-- SIDEBAR USER TITLE -->
                 <div class="profile-usertitle">
-                    <div class="profile-usertitle-name"> {{$currentUser->name}}</div>
+                    <div class="profile-usertitle-name"> {{$currentUser->first_name . ' ' . $currentUser->last_name }}</div>
                     <div class="profile-usertitle-job"> {{$currentUser->rule->name}} </div>
-                    @if(Auth()->user()->isActivated())
-                    <div class="profile-usertitle-job"> Code: {{$currentUser->code}} </div>
+                    @if($currentUser->isActivated())
+                    <div class="profile-usertitle-job"> @lang('lang.Code'): {{$currentUser->code}} </div>
+
                     @else
-                        <div class="profile-usertitle-job alert alert-danger" style="color: #0a001f" > Your Account is not activated yet </div>
+                        <div class="profile-usertitle-job"> @lang('lang.Code'): {{$currentUser->generateCode()}} </div>
+                        <div class="profile-usertitle-job alert alert-danger" style="color: #0a001f" > @lang('lang.Your Account is not activated yet') </div>
                     @endif
 
                 </div>
+
                 <!-- END SIDEBAR USER TITLE -->
                 <!-- SIDEBAR BUTTONS -->
                 <div class="profile-userbuttons">
-                   @if(Auth()->user()->isActivated())
-                        <button type="button" class="btn btn-circle green btn-sm">Activated</button>
+                   @if($currentUser->isActivated() && Auth()->user())
+                        <button type="button" class="btn btn-circle green btn-sm">@lang('lang.Activated')</button>
+                        <a href="https://www.shareaholic.com/api/share/?v=1&apitype=1&apikey=8943b7fd64cd8b1770ff5affa9a9437b&service=974&title=my code at lecowin = {{Auth()->user()->generateCode()}}&link={{Auth()->user()->generateMyProfileLink()}}/&source=www.google.com.eg&templates[whatsapp][phone]=+0201025894984" target="_blank">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="height: 50px;width: 43px">
+                        </a>
+                       @elseif(!Auth()->user())
+                        <a href="{{route('register.user',[App()->getLocale(),$currentUser->generateCode()])}}" type="button" class="btn btn-circle red btn-sm">@lang('lang.join_us')</a>
                     @else
                         <div class="modal fade " id="exampleModalLong6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -109,22 +116,22 @@ Account
                                     <div class="modal-body">
 
 
-                                        <form enctype="multipart/form-data" action="{{route('user.active',Auth()->user()->id) }}" method="post">
+                                        <form enctype="multipart/form-data" action="{{route('user.active',[App()->getLocale(),$currentUser->id]) }}" method="post">
                                             @csrf
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="portlet light bordered">
                                                         <div class="portlet-title">
                                                             <h2>
-                                                                Active your account for {{\App\Models\User::getActivationAmount()}} EGP for one year ?
+                                                                @lang('lang.Active your account for') {{\App\Models\User::getActivationAmount()}} @lang('lang.egp') @lang('lang.for one year') ?
                                                             </h2>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button  type="submit" class="btn btn-success "> Active </button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('lang.close')</button>
+                                                <button  type="submit" class="btn btn-success "> @lang('lang.Active') </button>
                                             </div>
 
                                         </form>
@@ -135,28 +142,28 @@ Account
                         </div>
 
 
-                        <button data-target="#exampleModalLong6" data-toggle="modal" type="button" class="btn btn-circle red btn-sm">Buy Account</button>
+                        <button data-target="#exampleModalLong6" data-toggle="modal" type="button" class="btn btn-circle red btn-sm">@lang('lang.Buy Account')</button>
                        @endif
 
                 </div>
                 <!-- END SIDEBAR BUTTONS -->
                 <!-- SIDEBAR MENU -->
-                <div class="profile-usermenu">
-                    <ul class="nav">
-                        <li class="active">
-                            <a href="{{Route('account.index')}}">
-                                <i class="icon-home"></i> Overview </a>
-                        </li>
-                        <li >
-                            <a href="{{Route('user.account.setting')}}">
-                                <i class="icon-settings"></i> Account Settings </a>
-                        </li>
-                        <li>
-                            <a href="page_user_profile_1_help.html">
-                                <i class="icon-info"></i> Help </a>
-                        </li>
-                    </ul>
-                </div>
+                @if(Auth()->check())
+                        <div class="profile-usermenu">
+                            <ul class="nav">
+                                <li class="active">
+                                    <a href="{{Route('profile.index',[App()->getLocale(),(Auth()->check() ?Auth()->user()->generateCode() : Request()->segment(3))])}}">
+                                        <i class="icon-home"></i> @lang('lang.Overview') </a>
+                                </li>
+                                <li >
+                                    <a href="{{Route('user.account.setting',App()->getLocale())}}">
+                                        <i class="icon-settings"></i> @lang('lang.Account Settings') </a>
+                                </li>
+
+                            </ul>
+                        </div>
+
+                    @endif
                 <!-- END MENU -->
             </div>
 
@@ -169,79 +176,85 @@ Account
             <!-- BEGIN PROFILE CONTENT -->
             <div class="profile-content">
                 <div class="row widget-row">
+                    @if(Auth()->check())
                     <div class="col-md-3">
                         <!-- BEGIN WIDGET THUMB -->
                         <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
-                            <h4 class="widget-thumb-heading">Current Balance</h4>
+                            <h4 class="widget-thumb-heading">@lang('lang.Current Balance')</h4>
                             <div class="widget-thumb-wrap">
                                 <i class="widget-thumb-icon bg-green icon-bulb"></i>
                                 <div class="widget-thumb-body">
-                                    <span class="widget-thumb-subtitle">EGP</span>
+                                    <span class="widget-thumb-subtitle">@lang('lang.egp')</span>
                                     <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{$currentUser->totalCash()}}"></span>
                                 </div>
                             </div>
                         </div>
                         <!-- END WIDGET THUMB -->
                     </div>
-                    <div class="col-md-3">
-                        <!-- BEGIN WIDGET THUMB -->
-                        <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
-                            <h4 class="widget-thumb-heading">current level</h4>
-                            <div class="widget-thumb-wrap">
-                                <i class="widget-thumb-icon bg-red icon-layers"></i>
-                                <div class="widget-thumb-body">
-                                    <span class="widget-thumb-subtitle">level</span>
-                                    <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{($currentUser->getMaxLevel())}}"></span>
+                  @endif
+
+
+                            <div class="col-md-{{Auth()->check()?'3':'6'}} ">
+                                <!-- BEGIN WIDGET THUMB -->
+                                <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
+                                    <h4 class="widget-thumb-heading">@lang('lang.current level')</h4>
+                                    <div class="widget-thumb-wrap">
+                                        <i class="widget-thumb-icon bg-red icon-layers"></i>
+                                        <div class="widget-thumb-body">
+                                            <span class="widget-thumb-subtitle">@lang('lang.level')</span>
+                                            <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{($currentUser->getMaxLevel())}}"></span>
+                                        </div>
+                                    </div>
                                 </div>
+                                <!-- END WIDGET THUMB -->
                             </div>
-                        </div>
-                        <!-- END WIDGET THUMB -->
-                    </div>
 
-                    <div class="col-md-3">
-                        <!-- BEGIN WIDGET THUMB -->
-                        <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
-                            <h4 class="widget-thumb-heading">Current Networkers</h4>
-                            <div class="widget-thumb-wrap">
-                                <i class="widget-thumb-icon bg-purple icon-screen-desktop"></i>
-                                <div class="widget-thumb-body">
-                                    @if($currentUser->countTotalNetworks() != 1 )
-                                    <span class="widget-thumb-subtitle">networkers</span>
-                                    @else
-                                        <span class="widget-thumb-subtitle">networker</span>
-                                        @endif
-                                    <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{$currentUser->countTotalNetworks()}}">815</span>
+                            <div class="col-md-{{Auth()->check()?'3':'6'}}">
+                                <!-- BEGIN WIDGET THUMB -->
+                                <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
+                                    <h4 class="widget-thumb-heading">@lang('lang.Current Networkers')</h4>
+                                    <div class="widget-thumb-wrap">
+                                        <i class="widget-thumb-icon bg-purple icon-screen-desktop"></i>
+                                        <div class="widget-thumb-body">
+                                            @if($currentUser->countTotalNetworks() != 1 )
+                                                <span class="widget-thumb-subtitle">@lang('lang.networkers')</span>
+                                            @else
+                                                <span class="widget-thumb-subtitle">@lang('lang.networker')</span>
+                                            @endif
+                                            <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{$currentUser->countTotalNetworks()}}">815</span>
+                                        </div>
+                                    </div>
                                 </div>
+                                <!-- END WIDGET THUMB -->
                             </div>
-                        </div>
-                        <!-- END WIDGET THUMB -->
-                    </div>
 
 
+                    @if(Auth()->check())
                     <div class="col-md-3">
                         <!-- BEGIN WIDGET THUMB -->
                         <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
-                            <h4 class="widget-thumb-heading">networkers balance</h4>
+                            <h4 class="widget-thumb-heading">@lang('lang.networkers balance')</h4>
                             <div class="widget-thumb-wrap">
                                 <i class="widget-thumb-icon bg-blue icon-bar-chart"></i>
                                 <div class="widget-thumb-body">
-                                    <span class="widget-thumb-subtitle">EGP</span>
-                                    <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{Auth()->user()->totalNetworkProfit()}}">5,071</span>
+                                    <span class="widget-thumb-subtitle">@lang('lang.egp')</span>
+                                    <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{$currentUser->totalNetworkProfit()}}">5,071</span>
                                 </div>
                             </div>
                         </div>
                         <!-- END WIDGET THUMB -->
                     </div>
-                    @if(Auth()->user()->isActivated() && Auth()->user()->notAdmin())
+                    @endif
+                    @if(Auth()->check() && $currentUser->isActivated() && $currentUser->notAdmin())
                         <div class="col-md-3">
                             <!-- BEGIN WIDGET THUMB -->
                             <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
-                                <h4 class="widget-thumb-heading">Account expires at</h4>
+                                <h4 class="widget-thumb-heading">@lang('lang.Account expires at')</h4>
                                 <div class="widget-thumb-wrap">
                                     <i class="widget-thumb-icon bg-blue icon-calendar"></i>
                                     <div class="widget-thumb-body">
-                                        <span class="widget-thumb-subtitle">Year</span>
-                                        <span class="widget-thumb-body-stat"  data-value="">{{expiresYear(Auth()->user()->activated_at)}}</span>
+                                        <span class="widget-thumb-subtitle">@lang('lang.year')</span>
+                                        <span class="widget-thumb-body-stat"  data-value="">{{expiresYear($currentUser->activated_at)}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -250,12 +263,12 @@ Account
                         <div class="col-md-3">
                             <!-- BEGIN WIDGET THUMB -->
                             <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
-                                <h4 class="widget-thumb-heading">Reminder days</h4>
+                                <h4 class="widget-thumb-heading">@lang('lang.Reminder days')</h4>
                                 <div class="widget-thumb-wrap">
                                     <i class="widget-thumb-icon bg-blue icon-clock"></i>
                                     <div class="widget-thumb-body">
-                                        <span class="widget-thumb-subtitle">days</span>
-                                        <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{expiresDays(expiresYear(Auth()->user()->activated_at))}}"></span>
+                                        <span class="widget-thumb-subtitle">@lang('lang.days')</span>
+                                        <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{expiresDays(expiresYear($currentUser->activated_at))}}"></span>
                                     </div>
                                 </div>
                             </div>
@@ -265,103 +278,114 @@ Account
 
                 </div>
                 <div class="row">
-                    <div class="col-md-6 col-sm-6">
-                        <!-- BEGIN PORTLET-->
-                        <div class="portlet light bordered">
-                            <div class="portlet-title">
-                                <div class="caption">
-                                    <i class="icon-bar-chart font-dark hide"></i>
-                                    <span class="caption-subject font-dark bold uppercase">networkers</span>
-                                    <span class="caption-helper">per level</span>
+                  @if(Auth()->check())
+
+                        <div class="col-md-12 col-sm-12">
+                            <!-- BEGIN PORTLET-->
+                            <div class="portlet light bordered">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <i class="icon-bar-chart font-dark hide"></i>
+                                        <span class="caption-subject font-dark bold uppercase">@lang('lang.networkers')</span>
+                                        <span class="caption-helper">@lang('lang.per level')</span>
+                                    </div>
+                                    {{--                                <div class="actions">--}}
+                                    {{--                                    <div class="btn-group btn-group-devided" data-toggle="buttons">--}}
+                                    {{--                                        <label class="btn red btn-outline btn-circle btn-sm active">--}}
+                                    {{--                                            <input type="radio" name="options" class="toggle" id="option1">New</label>--}}
+                                    {{--                                        <label class="btn red btn-outline btn-circle btn-sm">--}}
+                                    {{--                                            <input type="radio" name="options" class="toggle" id="option2">Returning</label>--}}
+                                    {{--                                    </div>--}}
+                                    {{--                                </div>--}}
                                 </div>
-                                <div class="actions">
-                                    <div class="btn-group btn-group-devided" data-toggle="buttons">
-                                        <label class="btn red btn-outline btn-circle btn-sm active">
-                                            <input type="radio" name="options" class="toggle" id="option1">New</label>
-                                        <label class="btn red btn-outline btn-circle btn-sm">
-                                            <input type="radio" name="options" class="toggle" id="option2">Returning</label>
+                                <div class="portlet-body">
+                                    <div id="site_statistics_loading" style="display: none;">
+                                        <img src="http://127.0.0.1:8000/assets/global/img/loading.gif" alt="loading"> </div>
+                                    <div id="site_statistics_content" class="display-none" style="display: block;">
+                                        <div id="site_statistics" class="chart" style="padding: 0px; position: relative;"> <canvas class="flot-base" width="743" height="337" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 661px; height: 300px;"></canvas><div class="flot-text" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);"><div class="flot-x-axis flot-x1-axis xAxis x1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;"><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 15px; text-align: center;">1</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 85px; text-align: center;">2</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 155px; text-align: center;">3</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 225px; text-align: center;">4</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 295px; text-align: center;">5</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 365px; text-align: center;">6</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 435px; text-align: center;">7</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 505px; text-align: center;">8</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 575px; text-align: center;">9</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 642px; text-align: center;">10</div></div><div class="flot-y-axis flot-y1-axis yAxis y1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;"><div style="position: absolute; top: 275px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 7px; text-align: right;">0</div><div style="position: absolute; top: 221px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 7px; text-align: right;">5</div><div style="position: absolute; top: 167px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">10</div><div style="position: absolute; top: 114px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">15</div><div style="position: absolute; top: 60px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">20</div><div style="position: absolute; top: 7px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">25</div></div></div><canvas class="flot-overlay" width="743" height="337" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 661px; height: 300px;"></canvas></div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="portlet-body">
-                                <div id="site_statistics_loading" style="display: none;">
-                                    <img src="http://127.0.0.1:8000/assets/global/img/loading.gif" alt="loading"> </div>
-                                <div id="site_statistics_content" class="display-none" style="display: block;">
-                                    <div id="site_statistics" class="chart" style="padding: 0px; position: relative;"> <canvas class="flot-base" width="743" height="337" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 661px; height: 300px;"></canvas><div class="flot-text" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);"><div class="flot-x-axis flot-x1-axis xAxis x1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;"><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 15px; text-align: center;">1</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 85px; text-align: center;">2</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 155px; text-align: center;">3</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 225px; text-align: center;">4</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 295px; text-align: center;">5</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 365px; text-align: center;">6</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 435px; text-align: center;">7</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 505px; text-align: center;">8</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 575px; text-align: center;">9</div><div style="position: absolute; max-width: 67px; top: 286px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 642px; text-align: center;">10</div></div><div class="flot-y-axis flot-y1-axis yAxis y1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;"><div style="position: absolute; top: 275px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 7px; text-align: right;">0</div><div style="position: absolute; top: 221px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 7px; text-align: right;">5</div><div style="position: absolute; top: 167px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">10</div><div style="position: absolute; top: 114px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">15</div><div style="position: absolute; top: 60px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">20</div><div style="position: absolute; top: 7px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">25</div></div></div><canvas class="flot-overlay" width="743" height="337" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 661px; height: 300px;"></canvas></div>
-                                </div>
-                            </div>
+                            <!-- END PORTLET-->
                         </div>
-                        <!-- END PORTLET-->
-                    </div>
-                    <div class="col-md-6 col-sm-6">
-                        <!-- BEGIN PORTLET-->
-                        <div class="portlet light bordered">
-                            <div class="portlet-title">
-                                <div class="caption">
-                                    <i class="icon-share font-red-sunglo hide"></i>
-                                    <span class="caption-subject font-dark bold uppercase">Revenue</span>
-                                    <span class="caption-helper">monthly stats...</span>
-                                </div>
-                                <div class="actions">
-                                    <div class="btn-group">
-                                        <a href="" class="btn dark btn-outline btn-circle btn-sm dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"> Filter Range
-                                            <span class="fa fa-angle-down"> </span>
-                                        </a>
-                                        <ul class="dropdown-menu pull-right">
-                                            <li>
-                                                <a href="javascript:;"> Q1 2014
-                                                    <span class="label label-sm label-default"> past </span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="javascript:;"> Q2 2014
-                                                    <span class="label label-sm label-default"> past </span>
-                                                </a>
-                                            </li>
-                                            <li class="active">
-                                                <a href="javascript:;"> Q3 2014
-                                                    <span class="label label-sm label-success"> current </span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="javascript:;"> Q4 2014
-                                                    <span class="label label-sm label-warning"> upcoming </span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="portlet-body">
-                                <div id="site_activities_loading" style="display: none;">
-                                    <img src="http://127.0.0.1:8000/assets/global/img/loading.gif" alt="loading"> </div>
-                                <div id="site_activities_content" class="display-none" style="display: block;">
-                                    <div id="site_activities" style="height: 228px; padding: 0px; position: relative;"> <canvas class="flot-base" width="743" height="256" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 661px; height: 228px;"></canvas><div class="flot-text" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);"><div class="flot-x-axis flot-x1-axis xAxis x1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;"><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 21px; text-align: center;">DEC</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 91px; text-align: center;">JAN</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 159px; text-align: center;">FEB</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 225px; text-align: center;">MAR</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 296px; text-align: center;">APR</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 363px; text-align: center;">MAY</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 433px; text-align: center;">JUN</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 503px; text-align: center;">JUL</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 569px; text-align: center;">AUG</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 640px; text-align: center;">SEP</div></div><div class="flot-y-axis flot-y1-axis yAxis y1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;"><div style="position: absolute; top: 198px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 20px; text-align: right;">0</div><div style="position: absolute; top: 149px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 7px; text-align: right;">500</div><div style="position: absolute; top: 101px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">1000</div><div style="position: absolute; top: 52px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">1500</div><div style="position: absolute; top: 4px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">2000</div></div></div><canvas class="flot-overlay" width="743" height="256" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 661px; height: 228px;"></canvas></div>
-                                </div>
-                                <div style="margin: 20px 0 10px 30px">
-                                    <div class="row">
-                                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">
-                                            <span class="label label-sm label-success"> Revenue: </span>
-                                            <h3>$13,234</h3>
-                                        </div>
-                                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">
-                                            <span class="label label-sm label-info"> Tax: </span>
-                                            <h3>$134,900</h3>
-                                        </div>
-                                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">
-                                            <span class="label label-sm label-danger"> Shipment: </span>
-                                            <h3>$1,134</h3>
-                                        </div>
-                                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">
-                                            <span class="label label-sm label-warning"> Orders: </span>
-                                            <h3>235090</h3>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- END PORTLET-->
-                    </div>
+                    @else
+
+                      <div class="col-md-12 col-sm-12 text-center">
+                          <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/VRyP5pvMAXM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+                      </div>
+
+                      @endif
+
+{{--                    <div class="col-md-6 col-sm-6">--}}
+{{--                        <!-- BEGIN PORTLET-->--}}
+{{--                        <div class="portlet light bordered">--}}
+{{--                            <div class="portlet-title">--}}
+{{--                                <div class="caption">--}}
+{{--                                    <i class="icon-share font-red-sunglo hide"></i>--}}
+{{--                                    <span class="caption-subject font-dark bold uppercase">Revenue</span>--}}
+{{--                                    <span class="caption-helper">monthly stats...</span>--}}
+{{--                                </div>--}}
+{{--                                <div class="actions">--}}
+{{--                                    <div class="btn-group">--}}
+{{--                                        <a href="" class="btn dark btn-outline btn-circle btn-sm dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"> Filter Range--}}
+{{--                                            <span class="fa fa-angle-down"> </span>--}}
+{{--                                        </a>--}}
+{{--                                        <ul class="dropdown-menu pull-right">--}}
+{{--                                            <li>--}}
+{{--                                                <a href="javascript:;"> Q1 2014--}}
+{{--                                                    <span class="label label-sm label-default"> past </span>--}}
+{{--                                                </a>--}}
+{{--                                            </li>--}}
+{{--                                            <li>--}}
+{{--                                                <a href="javascript:;"> Q2 2014--}}
+{{--                                                    <span class="label label-sm label-default"> past </span>--}}
+{{--                                                </a>--}}
+{{--                                            </li>--}}
+{{--                                            <li class="active">--}}
+{{--                                                <a href="javascript:;"> Q3 2014--}}
+{{--                                                    <span class="label label-sm label-success"> current </span>--}}
+{{--                                                </a>--}}
+{{--                                            </li>--}}
+{{--                                            <li>--}}
+{{--                                                <a href="javascript:;"> Q4 2014--}}
+{{--                                                    <span class="label label-sm label-warning"> upcoming </span>--}}
+{{--                                                </a>--}}
+{{--                                            </li>--}}
+{{--                                        </ul>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div class="portlet-body">--}}
+{{--                                <div id="site_activities_loading" style="display: none;">--}}
+{{--                                    <img src="http://127.0.0.1:8000/assets/global/img/loading.gif" alt="loading"> </div>--}}
+{{--                                <div id="site_activities_content" class="display-none" style="display: block;">--}}
+{{--                                    <div id="site_activities" style="height: 228px; padding: 0px; position: relative;"> <canvas class="flot-base" width="743" height="256" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 661px; height: 228px;"></canvas><div class="flot-text" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);"><div class="flot-x-axis flot-x1-axis xAxis x1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;"><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 21px; text-align: center;">DEC</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 91px; text-align: center;">JAN</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 159px; text-align: center;">FEB</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 225px; text-align: center;">MAR</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 296px; text-align: center;">APR</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 363px; text-align: center;">MAY</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 433px; text-align: center;">JUN</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 503px; text-align: center;">JUL</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 569px; text-align: center;">AUG</div><div style="position: absolute; max-width: 67px; top: 209px; font: small-caps 400 11px / 18px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 640px; text-align: center;">SEP</div></div><div class="flot-y-axis flot-y1-axis yAxis y1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;"><div style="position: absolute; top: 198px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 20px; text-align: right;">0</div><div style="position: absolute; top: 149px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 7px; text-align: right;">500</div><div style="position: absolute; top: 101px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">1000</div><div style="position: absolute; top: 52px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">1500</div><div style="position: absolute; top: 4px; font: small-caps 400 11px / 14px &quot;Open Sans&quot;, sans-serif; color: rgb(111, 123, 138); left: 1px; text-align: right;">2000</div></div></div><canvas class="flot-overlay" width="743" height="256" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 661px; height: 228px;"></canvas></div>--}}
+{{--                                </div>--}}
+{{--                                <div style="margin: 20px 0 10px 30px">--}}
+{{--                                    <div class="row">--}}
+{{--                                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">--}}
+{{--                                            <span class="label label-sm label-success"> Revenue: </span>--}}
+{{--                                            <h3>$13,234</h3>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">--}}
+{{--                                            <span class="label label-sm label-info"> Tax: </span>--}}
+{{--                                            <h3>$134,900</h3>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">--}}
+{{--                                            <span class="label label-sm label-danger"> Shipment: </span>--}}
+{{--                                            <h3>$1,134</h3>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">--}}
+{{--                                            <span class="label label-sm label-warning"> Orders: </span>--}}
+{{--                                            <h3>235090</h3>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <!-- END PORTLET-->--}}
+{{--                    </div>--}}
                 </div>
             </div>
             <!-- END PROFILE CONTENT -->
@@ -451,46 +475,46 @@ Account
 
         })
     </script>
-{{--    <script>--}}
-{{--        $(document).on('click', '#sub_edit_account_btn', function (e) {--}}
-{{--            e.preventDefault();--}}
-{{--            let lang = "{{App()->getLocale()}}";--}}
-{{--            let id = $(e.target).attr('account_id');--}}
-{{--            $.ajax({--}}
-{{--                type: 'put',--}}
-{{--                url: `/admin/categories/${id}`,--}}
-{{--                data: {--}}
-{{--                    '_token':"{{csrf_token()}}",--}}
-{{--                    'title_en':$("#title_en").val(),--}}
-{{--                    'title_ar':$("#title_ar").val(),--}}
-{{--                    'icon_url':$("#icon_url").val(),--}}
-{{--                    'description_en':CKEDITOR.instances.description_en.getData(),--}}
-{{--                    'description_ar':CKEDITOR.instances.description_ar.getData(),--}}
-{{--                    'sub_of':$('#sub_of').val()--}}
-{{--                },--}}
-{{--                success: function (data) {--}}
-{{--                    if(data.status===true)--}}
-{{--                    {--}}
-{{--                        $('.updated_success').show();--}}
+    <script>
+        $(document).on('click', '#sub_edit_account_btn', function (e) {
+            e.preventDefault();
+            let lang = "{{App()->getLocale()}}";
+            let id = $(e.target).attr('account_id');
+            $.ajax({
+                type: 'put',
+                url: `/admin/categories/${id}`,
+                data: {
+                    '_token':"{{csrf_token()}}",
+                    'title_en':$("#title_en").val(),
+                    'title_ar':$("#title_ar").val(),
+                    'icon_url':$("#icon_url").val(),
+                    'description_en':CKEDITOR.instances.description_en.getData(),
+                    'description_ar':CKEDITOR.instances.description_ar.getData(),
+                    'sub_of':$('#sub_of').val()
+                },
+                success: function (data) {
+                    if(data.status===true)
+                    {
+                        $('.updated_success').show();
 
-{{--                        setTimeout(function(){--}}
-{{--                            $('.updated_success').hide();--}}
-{{--                        },2000)--}}
-{{--                    }--}}
-{{--                    else{--}}
-{{--                        $('.alert-danger').show();--}}
-{{--                        $('#fail_message_id').append(`${data.message}`).css('display','block');--}}
-{{--                        setTimeout(function(){--}}
-{{--                            $('.alert-danger').hide();--}}
-{{--                            $('#fail_message_id').hide().empty();--}}
-{{--                        },2500)--}}
-{{--                    }--}}
-{{--                }--}}
-{{--            });--}}
-{{--        });--}}
+                        setTimeout(function(){
+                            $('.updated_success').hide();
+                        },2000)
+                    }
+                    else{
+                        $('.alert-danger').show();
+                        $('#fail_message_id').append(`${data.message}`).css('display','block');
+                        setTimeout(function(){
+                            $('.alert-danger').hide();
+                            $('#fail_message_id').hide().empty();
+                        },2500)
+                    }
+                }
+            });
+        });
 
 
-{{--    </script>--}}
+    </script>
 {{--    <script src="{{url('ckeditor/ckeditor.js')}}" type="text/javascript"></script>--}}
 {{--    <script>--}}
 
@@ -736,7 +760,7 @@ Account
                         return (Math.floor(Math.random() * (1 + 50 - 20))) + 10;
                     }
                     var visitors = [
-                            @foreach(\App\Models\Level_finance::countAllNetWorkers() as $key=>$counter)
+                            @foreach(\App\Models\Level_finance::countUserNetWorkers($currentUser) as $key=>$counter)
                         ['{{$key}}', {{$counter}}],
                         @endforeach
                     ];

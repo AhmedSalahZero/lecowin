@@ -18,16 +18,21 @@ class TransactionsController extends Controller
     {
        return view('admin.transactions.index')->with('transactions',Transaction::with(['sender','receiver'])->orderBy('created_at','desc')->get());
     }
+    public function show($id)
+    {
+        return view('admin.transactions.index')->with('transactions',Transaction::with(['sender','receiver'])->where('sender_id',$id)->orderBy('created_at','desc')->get());
+    }
+
     public function add(AddMoneyRequest $request,User $user):RedirectResponse
     {
-        $user->addTransactionAsReceiver($request,User::adminTransfer,null);
-        $user->addFinance($request,User::adminTransfer);
-        return redirect()->back()->with('success','Done !');
+        $user->addTransactionAsReceiver(User::adminTransfer,$request->amount);
+        $user->AddFinance($request->amount,User::adminTransfer);
+        return redirect()->back()->with('success',trans('lang.done'));
     }
     public function ActivationUser(User $user,Request $request):RedirectResponse
     {
         if($user->activeUser($request,true))
-        return redirect()->back()->with('success','Done !');
-        return redirect()->back()->with('fail','This user already activated');
+        return redirect()->back()->with('success',trans('lang.done'));
+        return redirect()->back()->with('fail',trans('lang.This user already activated'));
     }
 }

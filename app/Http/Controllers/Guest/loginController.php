@@ -20,12 +20,9 @@ class loginController extends Controller
             session()->flash('fail','your credentials are invalid ');
             return redirect()->back()->withInput($request->only(['email','remember']));
         }
+
         if(Auth()->user()->rule_id == 1 )
             return redirect()->intended(Route('admin.home'));
-        return redirect()->intended(Route('user.home'));
+        return redirect()->intended(Route('user.home',App()->getLocale()));
     }
-
-
-
-
 }

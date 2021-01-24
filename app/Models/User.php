@@ -2,7 +2,16 @@
 
 namespace App\Models;
 
+use App\Events\financeAdded;
+use App\Events\newAchievement;
+use App\Events\newAchievement2;
+use App\Events\newNetWorkerAdded;
+use App\Events\userRegistered;
+use App\Events\userSentMoneyToAdmin;
+use App\Events\userSentMoneyToUser;
+use App\Notifications\newUserRegistered;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,14 +23,12 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use mysql_xdevapi\XSession;
 use phpDocumentor\Reflection\Types\Boolean;
 
 class User extends Authenticatable
 {
-
-
-    //  use HasFactory, Notifiable;
-
+      use HasFactory, Notifiable;
     const default_rule = 2 ; // 1- admin    2-user
     const default_image_url = 'profile/default_profile_image.jpg';
     const default_level = 1 ;
@@ -30,13 +37,16 @@ class User extends Authenticatable
     const userTransfer = 'user transfer' ;
     const activation_by_admin = 'activation by admin';
     const activation_by_user='activation by user' ;
+    const discountPercentage = 10 ;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['name','email','password','rule_id','phone','address','passport_info','sub_of','image' ,'code','activated_at','transfer_password'];
+    protected $fillable = ['first_name' ,'last_name','email','password','rule_id','phone','address','passport_info','sub_of','image' ,'code',
+        'activated_at','transfer_password','WhatsApp','birthday','social_status','job','official_id'
+    ];
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -46,6 +56,19 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+    public function scopeRealUsers($query):builder
+    {
+        return $query->where('id','<>',0); // <> is equal to !=
+    }
+    public function scopeNotificationUser($query):builder
+    {
+        return $query->where('id',0); // <> is equal to !=
+    }
+
+    public function scopeGetAdmin($query):builder
+    {
+        return $query->where('rule_id',1);
+    }
 
     /**
      * The attributes that should be cast to native types.
@@ -56,7 +79,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     protected $dates = [
-        'activated_at'
+        'activated_at' ,
+        'birthday'
     ];
 
 
@@ -73,39 +97,12 @@ class User extends Authenticatable
         static::created(function($user){
             // add me in level number 1
             $user->addLevel(self::default_level);
-            // add me as a netWorker for my parent
-            $network=$user->parent->addNewNetWorker($user,self::default_level);
-            // add new finance to my parent
-            $user->parent->addNewFinance($network,self::default_level,level_object(self::default_level)->assign_cost ,'assign');
-            $user->updateMyParent($user->parent,$user); //pass the parent and child
-//            $user->levels()->attach([
-//                'level'=>self::default_level
-//            ]);
-//            // add the new user to his parent netWorker
-//            $network=Network::create([
-//                'user_id'=>$user->parent->id ,
-//                'networker_id'=>$user->id ,
-//                'level'=>self::default_level
-//            ]);
-
-            // add assignCost to his parent finance for his parent
-//            $user->parent->finances()->create([
-//                'network_id'=>$network->id ,
-//                'amount'=>level_object(self::default_level)->assign_cost ,
-//                'reason'=>'assign' ,
-//                'level_id'=>self::default_level
-//            ]);
-
-//            $user->parent->updateParentLevel($user);
-
+            Event(new userRegistered($user));
             Auth()->attempt([
                 'email'=>$user->email,
                 'password'=>Request()->password
             ], true);
-            return redirect()->route('account.index');
-            /*
-             * End Clean ?
-             * */
+            return redirect()->route('user.home',App()->getLocale());
         });
     }
     private function updateMyParent($parent,$child)
@@ -115,15 +112,13 @@ class User extends Authenticatable
             if($parent->hasFourNetWorkersOrItsMultiplesInMyLevel($child->getMaxLevel())){
                 // there is two paths [if the forth is the first or not]
                 // then if was the first four
+                // if has four or more send public notification for all users with this achievement
+                // postponed
+                Event(new newAchievement($parent,$child->getMaxLevel(),$parent->countLevelNetWorker($child->getMaxLevel())));
                 if($parent->hasTheFirstFourNetWorkerInMyLevel($child->getMaxLevel())){
-                    // add if statement
-                    /*
-                     * if($parent->getMaxLevel() != 10)
-                     * {
-                     * $parent->addLevel($child->getMaxLevel()+1);
-                     * }
-                     *
-                     * */
+
+                    if($parent->getMaxLevel() != self::maxLevelLimit)
+                        $parent->addLevel($child->getMaxLevel()+1);
                     $parent->addLevel($child->getMaxLevel()+1); // my level + 1
                     if ($parent->parent)
                     {
@@ -143,27 +138,31 @@ class User extends Authenticatable
                     if($parent->parent)
                     {
                         $parent->parent->addNewNetWorker($parent,$child->getMaxLevel());
-                        //                    $parent->addNewNetWorker($child,$child->getMaxLevel());
-                        $parent->updateMyParent($parent->parent,$parent);
-                        //   $child->updateMyParent($parent,$child);
+                        //$parent->addNewNetWorker($child,$child->getMaxLevel());
+                        $parent->updateMyParent($parent->parent,$child);
+//                        $parent->updateMyParent($parent->parent,$parent);
                     }
                 }
-
             }
-
         }
     }
     public function hasFourNetWorkersOrItsMultiplesInMyLevel($myLevel):bool
     {
         return $this->myNetworker()->whereLevel($myLevel)->count() % 4 === 0 && $this->myNetworker()->whereLevel($myLevel)->count()  != 0 ;
-
     }
-    public function hasMoreThanFourMultiplesNetWorkerInMyLevel($myLevel):bool
+        public function countLevelNetWorker($myLevel):int
     {
         // $this [the parent]
         // it may be 8 12 16 .. etc
-        return $this->myNetworker()->whereLevel($myLevel)->count() > 4;
+        return $this->myNetworker()->whereLevel($myLevel)->count();
     }
+
+//    public function hasMoreThanFourMultiplesNetWorkerInMyLevel($myLevel):bool
+//    {
+//        // $this [the parent]
+//        // it may be 8 12 16 .. etc
+//        return $this->myNetworker()->whereLevel($myLevel)->count() > 4;
+//    }
     public function hasTheFirstFourNetWorkerInMyLevel($myLevel):bool
     {
         return $this->myNetworker()->whereLevel($myLevel)->count() == 4;
@@ -176,6 +175,7 @@ class User extends Authenticatable
     }
     protected function addNewNetWorker($netWorker,$level):model
     {
+        Event(new newNetWorkerAdded($this , $netWorker , $level));
         return  Network::create([
             'user_id'=>$this->id ,
             'networker_id'=>$netWorker->id,
@@ -184,6 +184,7 @@ class User extends Authenticatable
     }
     protected function addNewFinance($network,$level,$amount,$reason):model
     {
+        event(new FinanceAdded($this,$amount));
         return Finance::create([
             'user_id'=>$this->id ,
             'network_id'=>$network->id ,
@@ -191,97 +192,15 @@ class User extends Authenticatable
             'amount'=>$amount ,
             'reason'=>$reason
         ]);
-//        return $this->finances()->create([
-//            'user_id'=>$this->id ,
-//            'network_id'=>$network->id ,
-//            'level_id'=>$level,
-//            'amount'=>$amount ,
-//            'reason'=>$reason
-//        ]);
+
     }
-//    public function updateParentLevel($child)
-//    {
-//        /*
-//         * Clean Code ;
-//         *
-//         * */
-//        if($this->CountLevelNetWorkers(level_object($this->getMaxLevel())) % 4 == 0)
-//        {
-//            if($this->countChildrenWithTheSameLevel($this->getMaxLevel())==4 && $this->CountLevelNetWorkers(level_object($this->getMaxLevel())) ==4)
-//            {
-//                $this->UpdateMyLevel();
-//                $this->updateMyParentNetworkWithMyChildLevel($child);
-//                $MyMaxOrEqualParent = $this->addNetworkToMyMaxOrEqualParent();
-//                $MyMaxOrEqualParent->updateParentLevel($this);
-//            }
-//            elseif (/*$this->countChildrenWithTheSameLevel($this->getMaxLevel())==4 &&*/ $this->CountLevelNetWorkers(level_object($this->getMaxLevel())) >4)
-//                $this->updateMyNetwork($child);
-//        }
-//        else{
-//            $this->updateMyNetwork($child);
-//        }
-//
-//
-//    }
-//    protected function updateMyParentNetworkWithMyChildLevel($child)
-//    {
-//        if ($this->parent) {
-//            {
-//                $this->netWorks()->create([
-//                    'networker_id' => $this->id,
-//                    'user_id' => $this->parent->id,
-//                    'level' => $child->getMaxLevel()
-//                ]);
-//            }
-//            $this->updateParentLevel();
-//        }
-//    }
-//    protected function updateMyNetwork($child)
-//    {
-//        if ($this->parent) {
-//            $this->netWorks()->create([
-//                'networker_id' => $this->id,
-//                'user_id' => $this->parent->id,
-//                'level' => $child->getMaxLevel()
-//            ]);
-//            $this->parent->updateParentLevel($this);
-//        }
-//        elseif($this->CountLevelNetWorkers(level_object($child->getMaxLevel())) >4){
-//            if ($this->parent)
-//            {
-//                $this->netWorks()->create([
-//                    'networker_id'=>$this->id ,
-//                    'user_id'=>$this->parent->id ,
-//                    'level'=>$child->getMaxLevel()
-//                ]);
-//                $this->parent->updateParentLevel($this);
-//
-//            }
-//
-//
-//        }
-//    }
-//
-//    protected function addNetworkToMyMaxOrEqualParent()
-//    {
-//        $myParentWithEqualOrHigherLevel = $this->getClosetParentWithEqualOrHigherLevel($this->getMaxLevel(), $this->parent) ;
-//        $this->netWorks()->create([
-//            'user_id' => $myParentWithEqualOrHigherLevel->id,
-//            'networker_id' => $this->id,
-//            'level' => $this->getMaxLevel()
-//        ]);
-//        return $myParentWithEqualOrHigherLevel ;
-//    }
-//    protected function UpdateMyLevel()
-//    {
-//        $currentParentLevel = $this->getMaxLevel() ;
-//        $this->levels()->attach([
-//            'level'=>$currentParentLevel+1   ,
-//        ]);
-//    }
     protected function setTransferPasswordAttribute($value)
     {
         $this->attributes['transfer_password'] = Hash::make($value);
+    }
+    protected function setBirthdayAttribute($value)
+    {
+        $this->attributes['birthday']=format_date($value);
     }
     public function rule():BelongsTo
     {
@@ -319,9 +238,14 @@ class User extends Authenticatable
     }
     public function ChangeProfileImage($request)
     {
-
         $this->update([
             'image'=>$request->image->store('profile','public')
+        ]);
+    }
+    public function ChangePassportImage($request)
+    {
+        $this->update([
+            'passport_info'=>$request->image->store('profile','public')
         ]);
     }
     public function parent()
@@ -339,11 +263,18 @@ class User extends Authenticatable
     public function EditAccount($request)
     {
         $this->update([
-            'name'=>$request->name ,
+            'first_name'=>$request->first_name ,
+            'last_name'=>$request->last_name,
+            'job'=>$request->job,
+            'birthday'=>$request->birthday,
             'email'=>$request->email ,
             'phone'=>$request->phone ,
-            'address'=>$request->address
-        ]);
+            'address'=>$request->address ,
+            'social_status'=>($request->social_status == 'null' ? null :$request->social_status) ,
+            'WhatsApp'=>$request->WhatsApp ,
+            'official_id'=>$request->official_id ,
+
+         ]);
     }
     public function changeProfilePassword($request):array
     {
@@ -351,7 +282,6 @@ class User extends Authenticatable
             return [
                 'fail'=>'notConfirmed'
             ];
-
         else if (!Hash::check($request->old_password, $this->password))
             return [
                 'fail'=>'old password not Matched !'
@@ -365,6 +295,7 @@ class User extends Authenticatable
             ];
         }
     }
+
     public function loginUser():void
     {
         Auth()->attempt([
@@ -384,7 +315,6 @@ class User extends Authenticatable
     public function getBasicProfit()
     {
         return $this->finances->sum('amount');
-
     }
     public function getMaxLevel():int
     {
@@ -406,102 +336,46 @@ class User extends Authenticatable
             ];
         }
         );
-//        dd($this->levels->keyBy('level')->map(function($level){
-//            return $level->users;
-//        }));
-        // start testing
-//      foreach ($this->myNetworker->keyBy('level') as $key=>$networker)
-//      {
-//
-//          $mynetworker[]=[
-//              'level'=>$networker->level ,
-//              'networker'=>$networker->netWorker
-//          ];
-//      }
-//        dd($mynetworker);
-        // end testing
-//          return $this->levels->keyBy('level')->map(function($level){
-//                return [
-//                    'level'=>$level ,
-//                    'networkers'=>$level->users->where('sub_of',$this->id)
-//                ];
-//            });
     }
-
     public function CountLevelNetWorkers($level):int //level members for the user
     {
         return ($level->networks->where('user_id',$this->id)->count());
-//        return $level->users->where('sub_of',$this->id)->count();
     }
     public function CountUniqueLevelNetWorkers($level):int //level members for the user
     {
         return $level->networks->where('user_id',$this->id)->unique('networker_id')->count();
-//        return $level->users->where('sub_of',$this->id)->count();
     }
     public function uniqueLevelNetWorkers($level):collection //level members for the user
     {
         return $level->networks->where('user_id',$this->id)->unique('networker_id');
-//        return $level->users->where('sub_of',$this->id)->count();
     }
-
-
-//    public function levelAssignCost($level):float
-//    {
-//        return $level->assign_cost;
-//    }
     public function levelFourthCost($level):float
     {
         return $level->forth_cost;
     }
-
     public function CountLevelProfit($level)
     {
         return $this->uniqueLevelNetWorkers($level)->sum(function($network) {
             return $network->finance->amount ;
         });
-//        return $this->levelAssignCost($level) * $this->CountUniqueLevelNetWorkers($level);
     }
     public function CountLevelsProfit()
     {
         return $this->levels->sum(function($level){
             return $this->CountLevelProfit($level) ;
         });
-//        return $this->levels->sum(function($level){
-//            return $this->levelAssignCost($level) * $this->CountUniqueLevelNetWorkers($level);
-//        });
     }
-
     public function CountLevelForthCost($level)
     {
         $levelNetWorkers = (floor($this->CountLevelNetWorkers($level) /4 )-1) ;
         return  $levelNetWorkers < 0 ? 0 : $levelNetWorkers *$this->levelFourthCost($level);
     }
-
-//    public function CountLevelForthCost($level)
-//    {
-//        $numberOfChunks = $this->NumberOfChunks($level)-1 ;
-//        $numberOfChunks = $numberOfChunks <= 0 ?0  :$numberOfChunks;
-//        return $numberOfChunks*$this->levelFourthCost($level);
-//    }
-
-
     public function CountLevelsForthCost()
     {
         return $this->levels->sum(function($level){
             return $this->CountLevelForthCost($level);
         });
     }
-//
-//    public function NumberOfChunks($level){
-//        $chunks= $level->users->where('sub_of',$this->id)->chunk(4);
-//        return $this->filterChunks($chunks)->count();
-//    }
-//    protected function filterChunks($chunks){
-//
-//        return $chunks->filter(function($chunk):bool{
-//           return $chunk->count() == 4  ;
-//        });
-//    }
     public function levelTotalProfit($level)
     {
         return $this->CountLevelProfit($level) + $this->CountLevelForthCost($level);
@@ -516,108 +390,21 @@ class User extends Authenticatable
     {
         return $this->finances->sum('amount');
     }
-
     public function generateCode():string
     {
         $idLength = strlen($this->id);
         $numberOfZeros = 7 - $idLength ;
         $zeros = str_repeat(0,$numberOfZeros);
-        return  ('A-'.$zeros . $this->id) ;
+        return  ('AE-'.$zeros . $this->id) ;
     }
-
     protected function findParentId($code)
     {
-
         return User::whereCode($code)->first()->id;
     }
-
-
-
-//    public function updateParentLevel($child)
-//    {
-//        /*
-//         * Clean Code ;
-//         *
-//         * */
-//        $numberOfChildrenWithTheSameLevel = $this->countChildrenWithTheSameLevel($this->getMaxLevel());
-//        if ($numberOfChildrenWithTheSameLevel == 4)
-//        {
-//
-//            $currentParentLevel = $this->getMaxLevel() ;
-//
-//        if($currentParentLevel != self::maxLevelLimit)
-//        {
-//            $this->levels()->attach([
-//                'level'=>$currentParentLevel+1   ,
-//            ]);
-//            $network=$this->netWorks()->create([
-//                'networker_id'=>$child->id  ,
-//                'level'=>$currentParentLevel+1 ,
-//                'user_id'=>$this->id
-//            ]);
-//            /*
-//             * Add Finance to the parent ;
-//             *
-//             * */
-//            if ($this->parent)
-//            {
-//                $higherParent=$this->getClosetParentWithEqualOrHigherLevel($this->getMaxLevel(),$this->parent);
-//                $higherParent->netWorks()->create([
-//                    'networker_id'=>$this->id  ,
-//                    'level'=>$child->id ,
-//                    'user_id'=>$higherParent->id
-//                ]);
-//
-//            }
-//        }
-//        else{
-//        $this->netWorks()->create([
-//                'networker_id'=>$child->id  ,
-//                'level'=>$currentParentLevel ,
-//                'user_id'=>$this->id
-//            ]);
-//            /*
-//             * Add Finance to the parent ;
-//             *
-//             * */
-//          if($this->parent)
-//          {
-//              $higherParent=$this->getClosetParentWithEqualOrHigherLevel($this->getMaxLevel(),$this->parent);
-//              $higherParent->netWorks()->create([
-//                  'networker_id'=>$this->id  ,
-//                  'level'=>$child->id ,
-//                  'user_id'=>$higherParent->id
-//              ]);
-//
-//          }
-//          /*
-//           * */
-//
-//
-//        }
-//
-//        }
-//
-//    }
-//    protected function findChildrenWithTheSameLevel($parentLevel)
-//    {
-//         return $this->children->keyBy('id')->map(function($child) use ($parentLevel){
-//         return $child->levels->where('level',$parentLevel);
-//     })->filter(function($item){
-//           // get none empty collections only
-//           return count($item);
-//       });
-//    }
-
-//    protected function countChildrenWithTheSameLevel($parentLevel)
-//    {
-//        return $this->findChildrenWithTheSameLevel($parentLevel)->count();
-//    }
     public function getArchivedTasks():collection
     {
         return $this->tasks()->where('status','archived')->get();
     }
-
     public function countArchivedTasks():int
     {
         return $this->tasks()->where('status','archived')->count();
@@ -630,30 +417,20 @@ class User extends Authenticatable
     {
         return  $this->tasks()->where('status','uncompleted')->count();
     }
-    public function addTransactionAsReceiver(Request $request,$reason,$amount):Model
+    public function addTransactionAsReceiver($reason,$amount):Model
     {
         return  $this->transactionsAsReceiver()->create([
             'receiver_id'=>$this->id ,
             'sender_id'=>Auth()->user()->id ,
             'reason'=>$reason ,
-            'amount'=>($request->amount?$request->amount:$amount)
-        ]);
-    }
-    public function addFinance(Request $request,$reason):model
-    {
-        return $this->finances()->create([
-            'reason'=>$reason ,
-            'amount'=>$request->amount  ,
-            'level_id'=>$this->getMaxLevel()
+            'amount'=>$amount
         ]);
     }
     public function isActivated()
     {
         return $this->code ;
-//        return $this->finances->keyBy('reason')->has('activation by admin') ||
-//               $this->finances->keyBy('reason')->has('activation by user');
     }
-    protected function AddFinanceByAmount($amount , $reason):void
+    public function AddFinance($amount , $reason):void
     {
         $this->finances()->create([
             'reason'=>$reason ,
@@ -663,29 +440,27 @@ class User extends Authenticatable
     }
     public function activeUser(Request $request,$admin):bool
     {
-
         if ($this->isActivated())
             return false;
-        $this->AddFinanceByAmount($this->getActivationAmount()* -1, ($admin ? self::activation_by_admin : self::activation_by_user));
+        $this->AddFinance($this->getActivationAmount()* -1, ($admin ? self::activation_by_admin : self::activation_by_user));
         if($admin)
         {
-            $this->AddFinanceByAmount($this->getActivationAmount(), self::activation_by_admin);
-            $this->addTransactionAsReceiver($request ,'account activation' ,$this->getActivationAmount());
-            $this->addTransactionAsReceiver($request ,'account activation' ,$this->getActivationAmount()*-1);
+            $this->AddFinance($this->getActivationAmount(), self::activation_by_admin);
+            $this->addTransactionAsReceiver('account activation' ,$this->getActivationAmount());
+            $this->addTransactionAsReceiver('account activation' ,$this->getActivationAmount()*-1);
         }
         $this->code =$this->generateCode();
         $this->activated_at = Now();
         $this->save();
+        $network=$this->parent->addNewNetWorker($this,self::default_level);
+        // add new finance to my parent
+        $this->parent->addNewFinance($network,self::default_level,level_object(self::default_level)->assign_cost ,'assign');
+        $this->updateMyParent($this->parent,$this); //pass the parent and child
         return true;
     }
-//    public static function findReceiver(Request $request)
-//    {
-//       return User::where('receiver_code',$request->receiver_email)->where('phone',$request->receiver_phone)->first();
-//        return User::where('email',$request->receiver_email)->where('phone',$request->receiver_phone)->first();
-//    }
     public static function getUserFromHisCode($code)
     {
-        $numericPart = (int) substr( $code,2);
+        $numericPart = (int) substr( $code,3);
         return User::where('id',$numericPart)->first();
     }
     public function hasEnoughMoney():bool
@@ -694,9 +469,15 @@ class User extends Authenticatable
     }
     public function sendMoneyTo(User $receiver,Request $request):void
     {
-        $receiver->AddFinanceByAmount($request->amount , self::userTransfer);
-        $this->AddFinanceByAmount($request->amount*-1 , self::userTransfer);
-        $receiver->addTransactionAsReceiver($request , self::userTransfer,null);
+        $adminPercentage = ($request->amount)/self::discountPercentage ;
+        $receiverAmount = $request->amount - $adminPercentage  ;
+        Event(new userSentMoneyToUser($this ,$receiver,$receiverAmount));
+          Event(new userSentMoneyToAdmin($this,$adminPercentage,self::discountPercentage));
+        $receiver->AddFinance($receiverAmount , self::userTransfer);
+        $receiver->getTheAdmin()->AddFinance($adminPercentage , self::userTransfer);
+        $this->AddFinance($request->amount*-1, self::userTransfer);
+        $receiver->addTransactionAsReceiver(self::userTransfer,$receiverAmount);
+        $receiver->getTheAdmin()->addTransactionAsReceiver( self::userTransfer,$adminPercentage);
     }
     public function accountExpires():bool
     {
@@ -707,12 +488,10 @@ class User extends Authenticatable
     public function MoneySent():float
     {
         return $this->transactionsAsSender->sum('amount');
-
     }
     public function MoneyReceived():float
     {
         return $this->transactionsAsReceiver->sum('amount');
-
     }
     public function logout()
     {
@@ -738,15 +517,66 @@ class User extends Authenticatable
                 return $this->getTheAdmin();
             }
         }
-        // good
         return $this->getTheAdmin();
     }
-    protected function getTheAdmin()
+    public function getTheAdmin()
     {
         return User::where('rule_id' , 1)->first();
     }
     public function notAdmin()
     {
         return $this->rule_id == 2 ;
+    }
+    public function findAllChildren($myChildren)
+    {
+        $myChildren[$this->id] = $this->children;
+        foreach ($this->children  as $child)
+        {
+//            dump($child->id);
+            if($child->hasChildren())
+                return $child->findAllChildren($myChildren);
+            continue ;
+        }
+        return $myChildren ;
+    }
+
+    public function hasChildren()
+    {
+        return User::where('sub_of',$this->id)->exists();
+    }
+    public function generateMyProfileLink()
+    {
+        return url('/'.App()->getLocale().'/'.'profile/'.$this->generateCode()) ;
+    }
+    public function completedProfileInfoPercentage():string
+    {
+        $numberOfCompletedField = collect($this->only(['first_name','last_name' , 'email' , 'phone','WhatsApp','address' ,'passport_info','birthday','social_status','job','official_id']))->filter(function($item){
+            return $item != null ;
+        })->count() ;
+        return  ((int)(($numberOfCompletedField / 11) * 100)) .' %' ;
+    }
+    public function myParents($parents , $i=1)
+    {
+        if($i != 10)
+            if($this->parent)
+            {
+             $parents[$this->parent->id] = $this->parent ;
+             return $this->parent->myParents($parents , ++$i); // with parent
+            }
+        return $parents ;
+    }
+    public static function achievementNotifications()
+    {
+        return User::notificationUser()->first()->notifications()->whereJsonContains('data',['type'=>'achievement'])->get() ;
+    }
+
+    public static function allUserNotifications()
+    {
+    return Auth()->user()->unreadNotifications->merge(
+        User::notificationUser()->first()->notifications()->whereJsonContains('data',[
+            'type'=>'public_notification'
+        ])->get()
+);
+
     }
 }

@@ -10,7 +10,7 @@ class logoutController extends Controller
     public function logout(User $user)
     {
         $user->logout();
-        return redirect()->route('login.index');
+        return redirect()->route('login.index',App()->getLocale());
 
     }
 }

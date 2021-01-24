@@ -29,10 +29,10 @@ class LibrariesController extends Controller
     {
         $image=$this->uploadImage($request,'library\image') ;
         if (!$image)
-            return redirect()->back()->with('fail', 'Image dimensions must be at least 254*257');
+            return redirect()->back()->with('fail', trans('lang.Image dimensions must be at least 254*257'));
          $pdf = $this->uploadFile($request,'library\pdf');
          Library::create(array_merge($request->only(['name','description']) , ['image'=>$image], ['pdf'=>$pdf] ,['created_by'=>Auth::user()->id]));
-         return redirect()->route('libraries.create')->with('success','Done');
+         return redirect()->route('libraries.create')->with('success',trans('lang.done'));
 
     }
     public function edit(Library $library)

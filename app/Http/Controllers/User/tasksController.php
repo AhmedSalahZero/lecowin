@@ -25,15 +25,23 @@ class tasksController extends Controller
             'user_id'=>Auth()->user()->id,
             'status'=>'uncompleted'
         ] ));
-        return redirect()->route('tasks.index')->with('success','Done !');
+        return redirect()->route('tasks.index',App()->getLocale())->with('success',trans('lang.done'));
     }
-    public function update(Request $request , Task $task):RedirectResponse
+//    public function update(Request $request , Task $task):RedirectResponse
+//    {
+//        $task->update(array_merge($request->only(['name','note']) ,[
+//            'due_date'=>format_date($request->due_date) ,
+//            ]));
+//        return redirect()->route('tasks.index',App()->getLocale())->with('success',trans('lang.done'));
+//    }
+    public function editWithAjax(Task $task , Request $request  ):JsonResponse
     {
-        $task->update(array_merge($request->only(['name','note']) ,[
-            'due_date'=>format_date($request->due_date) ,
-            ]));
-        return redirect()->route('tasks.index')->with('success','Done !');
+        $this->formatData($task,$request);
+        return response()->json([
+            'status'=>true
+        ]);
     }
+
     public function completedTask(Task $task):RedirectResponse
     {
        $task->completedTask();
@@ -46,7 +54,7 @@ class tasksController extends Controller
     public function archiveTask(Task $task):RedirectResponse
     {
         $task->archivedTask();
-        return redirect()->back()->with('success','Done !');
+        return redirect()->back()->with('success',trans('lang.done'));
 
     }
     public function destroy(Task $task , User $user):jsonResponse
@@ -60,5 +68,21 @@ class tasksController extends Controller
            'completed_tasks_count'=>$user->countCompletedTasks(),
            'uncompleted_tasks_count'=>$user->countUncompletedTasks()
        ]);
+    }
+    protected function formatData($task,$request):void
+    {
+        $originalNote = explode('#',$task->note) ;
+        $originalDueDate = explode('#',$task->due_date) ;
+        $originalNote[$request->segmentNumber] = $request->noteField ;
+        $originalDueDate[$request->segmentNumber] = format_date($request->dueDateField) ;
+        $task->due_date = implode('#',$originalDueDate) ;
+        $task->note = implode('#',$originalNote) ;
+        $task->name = $request->nameField   ;
+        $task->save();
+    }
+
+    public function calendar()
+    {
+        return view('user.tasks.calendar');
     }
 }

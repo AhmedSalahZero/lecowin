@@ -1,16 +1,16 @@
 @extends('user.layout.index')
 
 @section('title')
-    transactions
+    @lang('lang.transactions')
 @endsection
 @section('inside_title')
-    confirm your transaction
+@lang('lang.confirm your transaction')
 @endsection
 @section('header_link')
 
 
     <li>
-        <span>transactions</span>
+        <span>@lang('lang.transactions')</span>
     </li>
 @endsection
 
@@ -50,7 +50,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form enctype="multipart/form-data" action="{{route('user.transfer.money') }}" method="post">
+                        <form enctype="multipart/form-data" action="{{route('user.transfer.money',App()->getLocale()) }}" method="post">
                             @csrf
                             <div class="row">
                                 <div class="col-md-12">
@@ -59,7 +59,7 @@
                                         </div>
                                         <div class="portlet-body form">
                                             <div class="form-body">
-                                                <h2 > Are You Sure ? </h2>
+                                                <h2 > @lang('lang.Are You Sure ?') </h2>
                                                 <input type="hidden" name="receiver_code" value="{{$receiver->generateCode()}}">
                                                 <input type="hidden" name="amount" value="{{$amount}}">
                                             </div>
@@ -68,8 +68,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button  type="submit" class="btn btn-success "> Transfer </button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('lang.close')</button>
+                                <button  type="submit" class="btn btn-success "> @lang('lang.Transfer') </button>
                             </div>
 
                         </form>
@@ -87,21 +87,21 @@
                     <thead>
                     <tr>
 
-                        <th> Sender </th>
-                        <th> Receiver name </th>
-                        <th > Receiver Email </th>
-                        <th > Receiver Code </th>
-                        <th> Amount </th>
+                        <th> @lang('lang.Sender') </th>
+                        <th> @lang('lang.Receiver name') </th>
+                        <th > @lang('lang.Receiver Email') </th>
+                        <th > @lang('lang.Receiver Code') </th>
+                        <th> @lang('lang.Amount') </th>
 
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <td> {{$user->name}} </td>
-                        <td > {{$receiver->name}} </td>
+                        <td> {{$user->first_name . ' ' . $user->last_name}} </td>
+                        <td > {{$receiver->first_name . ' ' .$receiver->last_name}} </td>
                         <td > {{$receiver->email}} </td>
                         <td > {{$receiver->generateCode()}} </td>
-                        <td > {{$amount}} EGP </td>
+                        <td > {{$amount}} @lang('lang.egp') </td>
                     </tr>
 
                     </tbody>
@@ -112,16 +112,16 @@
 
             <div class="col-xs-12 invoice-block">
 
-                <a href="{{Route('user.transactions',$receiver->generateCode())}}" class="btn btn-lg red hidden-print margin-bottom-5 margin-top-5"> Cancel
+                <a href="{{Route('user.transactions',[App()->getLocale(),$receiver->generateCode()])}}" class="btn btn-lg red hidden-print margin-bottom-5 margin-top-5"> @lang('lang.Cancel')
                     <i class="fa fa-ca"></i>
                 </a>
 
-                <a class="btn btn-lg blue hidden-print margin-bottom-5" onclick="javascript:window.print();"> Print
+                <a class="btn btn-lg blue hidden-print margin-bottom-5" onclick="javascript:window.print();"> @lang('lang.Print')
                     <i class="fa fa-print"></i>
                 </a>
 
 
-                <a class="btn btn-lg green hidden-print margin-bottom-5" data-toggle="modal" data-target="#exampleModalLong30"> confirm
+                <a class="btn btn-lg green hidden-print margin-bottom-5" data-toggle="modal" data-target="#exampleModalLong30"> @lang('lang.confirm')
                     <i class="fa fa-check"></i>
                 </a>
 
@@ -174,34 +174,34 @@
 
 
 
-        $(document).ready(function(){
-            $('.dataTables_filter').on('keyup',function(){
-                let query = $('.search_input').val();
-                if(query ==='')
-                {
-                    $('.all_data').show();
-                    return ;
-                }
-                query = query.split(' ').join('%');
-                console.log(query);
-                let lang="{{App()->getLocale()}}";
-                $.ajax({
-                        type:'get',
-                        url:`/${lang}/adminPanel/filterusers/${query}`,
-                        beforeSend:function (){
+        {{--$(document).ready(function(){--}}
+        {{--    $('.dataTables_filter').on('keyup',function(){--}}
+        {{--        let query = $('.search_input').val();--}}
+        {{--        if(query ==='')--}}
+        {{--        {--}}
+        {{--            $('.all_data').show();--}}
+        {{--            return ;--}}
+        {{--        }--}}
+        {{--        query = query.split(' ').join('%');--}}
+        {{--        console.log(query);--}}
+        {{--        let lang="{{App()->getLocale()}}";--}}
+        {{--        $.ajax({--}}
+        {{--                type:'get',--}}
+        {{--                url:`/${lang}/adminPanel/filterusers/${query}`,--}}
+        {{--                beforeSend:function (){--}}
 
-                        },
-                        success:function(data){
-                            $('.all_data').hide();
-                            $('.searched_data').empty().append(data.searchData);
+        {{--                },--}}
+        {{--                success:function(data){--}}
+        {{--                    $('.all_data').hide();--}}
+        {{--                    $('.searched_data').empty().append(data.searchData);--}}
 
 
 
-                        }
-                    }
-                )
-            })
-        });
+        {{--                }--}}
+        {{--            }--}}
+        {{--        )--}}
+        {{--    })--}}
+        {{--});--}}
     </script>
     <script>
         $('li').removeClass('active');

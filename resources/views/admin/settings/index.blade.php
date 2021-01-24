@@ -13,6 +13,7 @@
     </li>
 @endsection
 @section('header')
+
     <link href="{{asset('assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css')}}" rel="stylesheet" type="text/css" />
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
     <link href="{{asset('assets/global/plugins/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css" />
@@ -35,8 +36,8 @@
 
     <style >
         *{
-            font-size: 17px;
-            font-family: Tahoma;
+            /*font-size: 17px;*/
+            /*font-family: Tahoma;*/
         }
         .icon_ar:before {
             content: "\e09a";
@@ -71,6 +72,10 @@
                                         <input style="font-size: 17px;" type="text" class="form-control"  id="{{$setting->setting_name}}" name="{{$setting->setting_name}}" value="{{$setting->setting_value}}"> </div>
                                 </div>
                                 @endforeach
+                               <script>
+                                   document.getElementById('liveChatStatus').parentElement.parentElement.remove()
+                               </script>
+
                                    </div>
 
                                </div>
@@ -91,17 +96,99 @@
 
 
 
+
+
+
+            <div class="form-actions text-center">
+                    <button class="btn blue btn-small"  style="margin-bottom: 10px">Save</button>
+            </div>
+
+    </form>
+
+    <form enctype="multipart/form-data" action="{{route('costs.update') }}" method="post">
+        @csrf
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption font-red-sunglo">
+                            <i class="icon-settings font-red-sunglo"></i>
+                            <span class="caption-subject bold uppercase">Levels Costs</span>
+                        </div>
+
+                    </div>
+                    <div class="portlet-body form">
+                        <div class="form-body">
+
+                                <div class="form-group">
+
+                                    <select name="level_number" class="form-control cost_select">
+                                        <option value="none"  selected> Select Level </option>
+                                        <@foreach(\App\Models\Level_finance::all() as $level_finance)
+                                            <option value="{{$level_finance->level}}"> {{$level_finance->level}} </option>
+                                        @endforeach
+
+                                    </select>
+                                    <label for="assign_id" class="assign_label"> Assign Cost </label>
+                                    <input id="assign_id" type="text" name="assign_cost" class="form-control assign_input" placeholder="Assign Cost" style="margin-bottom: 5px;margin-top: 5px">
+                                    <label for="fourth_id" class="fourth_label"> Fourth Cost </label>
+                                    <input id="fourth_id" type="text" name="forth_cost" class="form-control forth_input" placeholder="Forth Cost">
+
+                                </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
 
-            <div class="form-actions">
-                    <button class="btn blue btn-small"  style="position: absolute;right: 50%;bottom: 4.2%;">Edit</button>
+        </div>
+        <div class="form-actions text-center">
+            <button class="btn blue btn-small" style="margin-bottom: 10px">Save</button>
+        </div>
+
+    </form>
+    <form enctype="multipart/form-data" action="{{route('admin.control.chat') }}" method="post">
+        @csrf
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption font-red-sunglo">
+                            <i class="icon-settings font-red-sunglo"></i>
+                            <span class="caption-subject bold uppercase"> Control LiveChat </span>
+                        </div>
+
+                    </div>
+                    <div class="portlet-body form">
+                        <div class="form-body">
+
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        <div class="form-actions text-center">
+            @if(\App\Models\Setting::liveChatStatus())
+            <button class="btn red btn-small" value="off" type="submit" style="margin-bottom: 10px">Turn Live Chat Off </button>
+                <input type="hidden" value="0" name="liveChatStatus" >
+                @else
+                <input type="hidden" value="1" name="liveChatStatus" >
+                <button class="btn green btn-small" type="submit" value="on" style="margin-bottom: 10px">Turn Live Chat on </button>
+                @endif
+        </div>
+
     </form>
+
+
 @endsection
 
 @section('footer')
+
     <script src="{{asset('assets/global/plugins/jquery.min.js')}}" type="text/javascript"></script>
     <script src="{{asset('assets/global/plugins/bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>
     <script src="{{asset('assets/global/plugins/js.cookie.min.js')}}" type="text/javascript"></script>
@@ -119,6 +206,43 @@
     <script src="{{asset('assets/layouts/global/scripts/quick-sidebar.min.js')}}" type="text/javascript"></script>
     <script src="{{asset('assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js')}}" type="text/javascript"></script>
 
+    <script>
+
+        $('.assign_input , .forth_input,.assign_label,.fourth_label').hide();
+        $('.cost_select').on('change',function(){
+            let selectedOptionValue = $('.cost_select option:selected').attr('value') ;
+            if(selectedOptionValue != 'none') {
+                $('.assign_input , .forth_input,.assign_label,.fourth_label').show();
+                $.ajax({
+                    type: 'get',
+                    url: "setting/get/costs/"+selectedOptionValue,
+                    data: {
+
+                    },
+                    success: function (data) {
+                        if(data.status===true)
+                        {
+                            // console.log(data.assign_cost);
+                            $('.assign_input').val(data.assign_cost);
+                            $('.forth_input').val(data.forth_cost);
+                        }
+
+
+                    }
+                });
+
+            }
+            else{
+                $('.assign_input , .forth_input,.assign_label,.fourth_label').hide();
+                $('.assign_input').val('');
+                $('.forth_input').val('');
+
+            }
+
+
+        })
+    </script>
+
 
     <script>
         $('#sub_of').on('change',function(){
@@ -130,60 +254,6 @@
 
         })
     </script>
-    {{--    <script>--}}
-    {{--        $(document).on('click', '#sub_edit_setting_btn', function (e) {--}}
-    {{--            e.preventDefault();--}}
-    {{--            let lang = "{{App()->getLocale()}}";--}}
-    {{--            let id = $(e.target).attr('setting_id');--}}
-    {{--            $.ajax({--}}
-    {{--                type: 'put',--}}
-    {{--                url: `/admin/settings/${id}`,--}}
-    {{--                data: {--}}
-    {{--                    '_token':"{{csrf_token()}}",--}}
-    {{--                    'title_en':$("#title_en").val(),--}}
-    {{--                    'title_ar':$("#title_ar").val(),--}}
-    {{--                    'icon_url':$("#icon_url").val(),--}}
-    {{--                    'description_en':CKEDITOR.instances.description_en.getData(),--}}
-    {{--                    'description_ar':CKEDITOR.instances.description_ar.getData(),--}}
-    {{--                    'sub_of':$('#sub_of').val()--}}
-    {{--                },--}}
-    {{--                success: function (data) {--}}
-    {{--                    if(data.status===true)--}}
-    {{--                    {--}}
-    {{--                        $('.updated_success').show();--}}
 
-    {{--                        setTimeout(function(){--}}
-    {{--                            $('.updated_success').hide();--}}
-    {{--                        },2000)--}}
-    {{--                    }--}}
-    {{--                    else{--}}
-    {{--                        $('.alert-danger').show();--}}
-    {{--                        $('#fail_message_id').append(`${data.message}`).css('display','block');--}}
-    {{--                        setTimeout(function(){--}}
-    {{--                            $('.alert-danger').hide();--}}
-    {{--                            $('#fail_message_id').hide().empty();--}}
-    {{--                        },2500)--}}
-    {{--                    }--}}
-    {{--                }--}}
-    {{--            });--}}
-    {{--        });--}}
-
-
-    {{--    </script>--}}
-
-
-    {{--    <script src="{{url('ckeditor/ckeditor.js')}}" type="text/javascript"></script>--}}
-    {{--    <script>--}}
-
-    {{--        CKEDITOR.replace( 'description_en', {--}}
-    {{--            height: 300,--}}
-    {{--            filebrowserUploadUrl: "{{Route('upload.image',App()->getLocale())}}"--}}
-    {{--        });--}}
-    {{--        CKEDITOR.replace( 'description_ar', {--}}
-    {{--            height: 300,--}}
-    {{--            filebrowserUploadUrl: "{{Route('upload.image',App()->getLocale())}}",--}}
-    {{--            filebrowserUploadMethod: 'form'--}}
-    {{--        });--}}
-    {{--    </script>--}}
 
 @endsection

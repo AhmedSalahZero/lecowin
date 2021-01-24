@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Models\Library;
+use App\Models\User;
+use App\Notifications\newUserRegistered;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
@@ -12,7 +14,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('user.account.index')->with('currentUser',Auth()->user()->load('rule'));
+        return view('user.home.index')->with('currentUser',Auth()->user()->load('rule'));
     }
     public function show()
     {
@@ -22,6 +24,13 @@ class HomeController extends Controller
     {
         $headers = ['Content-Type' => 'application/pdf'];
         return response()->download(storage_path('app/public/'.$library->pdf), 'test.pdf', $headers);
+    }
+    public function markNotificationsAsRead(User $user)
+    {
+        $user->unreadNotifications->markAsRead();
+        return response()->json([
+            'success'=>true
+        ]);
     }
 
 

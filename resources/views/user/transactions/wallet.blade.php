@@ -8,12 +8,12 @@
 
 @section('inside_title')
 
-    My Wallet
+{{--    My Wallet--}}
 
 @endsection
 @section('header_link')
     <li>
-        <a href="{{Route('wallet.index')}}">wallet </a>
+        <a href="{{Route('wallet.index',App()->getLocale())}}">wallet </a>
         <i class="fa fa-money"></i>
     </li>
 
@@ -45,10 +45,10 @@
 @endsection
 
 @section('inside_title')
-    My wallet
+{{--    My wallet--}}
 @endsection
 @section('content')
-
+    @include('partial.toaster')
 {{--    @include('partial.toaster')--}}
 {{--    <div class="alert alert-danger" style="display: none;text-align: center">--}}
 {{--        <strong id="fail_message_id">  </strong>--}}

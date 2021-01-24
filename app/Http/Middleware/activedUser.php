@@ -18,6 +18,6 @@ class activedUser
     {
         if($request->user()->isActivated())
         return $next($request);
-        return redirect()->back()->with('fail','You have to active your account to see this page');
+        return redirect()->back()->with('fail',trans('lang.You have to active your account to see this page'));
     }
 }

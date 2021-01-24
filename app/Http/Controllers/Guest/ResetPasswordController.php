@@ -28,7 +28,7 @@ class ResetPasswordController extends Controller
             $user->resetPassword($request);
             $user->loginUser();
             $this->deleteOldToken($token);
-            return redirect()->route('account.index');
+            return redirect()->route('user.home',App()->getLocale());
 
         };
 

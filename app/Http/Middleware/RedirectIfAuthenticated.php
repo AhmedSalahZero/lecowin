@@ -26,7 +26,7 @@ class RedirectIfAuthenticated
             if (Auth::guard($guard)->check())
             {
                 if(Auth()->user()->rule_id ==2 )
-                return redirect()->route('user.home');
+                return redirect()->route('user.home',App()->getLocale());
                 return redirect()->route('admin.home');
 
             }

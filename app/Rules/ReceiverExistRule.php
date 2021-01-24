@@ -26,7 +26,7 @@ class ReceiverExistRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        return User::where('id',(int) substr( $value,2))->exists();
+        return User::where('id',(int) substr( $value,3))->exists();
     }
 
     /**

@@ -4,7 +4,7 @@
     transactions
 @endsection
 @section('inside_title')
-    transactions
+{{--    transactions--}}
 @endsection
 @section('header_link')
     <li>
@@ -35,7 +35,7 @@
 
 @section('content')
     @include('partial.toaster')
-    <div id="sample_1_filter" class="dataTables_filter"><label>Search:<input style="font-size: 17px" type="search" class="form-control input-sm input-small input-inline search_input" placeholder="" aria-controls="sample_1"></label></div>
+{{--    <div id="sample_1_filter" class="dataTables_filter"><label>Search:<input style="font-size: 17px" type="search" class="form-control input-sm input-small input-inline search_input" placeholder="" aria-controls="sample_1"></label></div>--}}
 
     <div class="portlet" >
         <div class="portlet-title">
@@ -49,8 +49,8 @@
             </div>
         </div>
         <div class="portlet-body">
-            <div class="table-scrollable">
-                <table class="table table-striped table-bordered table-advance table-hover">
+            <div class="table-scrollable ">
+                <table id="myTable" class="table table-striped table-bordered table-advance table-hover">
                     <thead>
                     <tr>
                         <th>
@@ -76,9 +76,9 @@
                         @foreach($transactions as $transaction)
                             <tr>
                                 <td>{{$transaction->id}}</td>
-                                <td>{{$transaction->sender->id}}</td>
-                                <td class="hidden-xs"> {{$transaction->receiver->id}}</td>
-                                <td class="hidden-xs"> {{$transaction->amount}}</td>
+                                <td>{{$transaction->sender->first_name . ' ' .$transaction->sender->last_name }}</td>
+                                <td class="hidden-xs"> {{$transaction->receiver->first_name . ' ' .$transaction->receiver->first_last}}</td>
+                                <td class="hidden-xs"> {{$transaction->amount}} EGP</td>
                                 <td class="hidden-xs"> {{$transaction->reason}}</td>
                                 <td class="hidden-xs"> {{format_date($transaction->created_at)}}</td>
                                 <td>
@@ -97,14 +97,14 @@
                                         </div>
                                         <div class="modal-body">
 
-                                            <h4> receiver Name  : {{$transaction->receiver->name}} </h4>
+                                            <h4> receiver Name  : {{$transaction->receiver->first_name . ' ' . $transaction->receiver->last_name}} </h4>
                                             <h4>   receiver Email : {{$transaction->receiver->email}} </h4>
                                             <h4>  receiver Phone : {{$transaction->receiver->phone}} </h4>
-                                            <h4>  sender Name    : {{$transaction->sender->name}}</h4>
+                                            <h4>  sender Name    : {{$transaction->sender->first_name . ' ' .$transaction->sender->last_name}}</h4>
                                             <h4>  sender Email   : {{$transaction->sender->email}}</h4>
                                             <h4>  sender Phone   : {{$transaction->sender->phone}}</h4>
                                             <h4>  Amount         : {{$transaction->amount}} EGP </h4>
-                                            <h4>  Reason         : {{$transaction->reason}} EGP </h4>
+                                            <h4>  Reason         : {{$transaction->reason}}  </h4>
                                             <h4>  date           : {{format_date($transaction->created_at)}}</h4>
                                         </div>
                                         <div class="modal-footer">

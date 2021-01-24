@@ -16,7 +16,7 @@ class CheckIfAdmin
 
         if (Auth()->check() && Auth()->user()->rule_id == 1)
             return $next($request);
-        return redirect()->route('login.index');
+        return redirect()->route('login.index',App()->getLocale());
     }
 
 }

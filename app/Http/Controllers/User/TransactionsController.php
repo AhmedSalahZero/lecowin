@@ -15,7 +15,6 @@ class TransactionsController extends Controller
 {
     public function index(User $user)
     {
-
         return view('user.transactions.index')->with('user',$user->load(['transactionsAsReceiver.sender','transactionsAsSender.receiver']));
     }
     public function confirmReceiver(UserTransferMoneyRequest $request ,User $user):view
@@ -27,7 +26,7 @@ class TransactionsController extends Controller
     {
         $receiver = User::getUserFromHisCode($request->receiver_code);
         $user->sendMoneyTo($receiver,$request);
-        return redirect()->back()->with('success','money has been transformed');
+        return redirect()->back()->with('success',trans('lang.money has been transformed'));
     }
 
     public function wallet(User $user):view

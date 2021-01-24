@@ -25,7 +25,7 @@ class SenderIsNotTheReciever implements Rule
      */
     public function passes($attribute, $value)
     {
-        return (int) substr( $value,2) != Auth()->user()->id ;
+        return (int) substr( $value,3) != Auth()->user()->id ;
     }
 
     /**

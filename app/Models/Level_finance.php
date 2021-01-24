@@ -30,6 +30,13 @@ class Level_finance extends Model
            return $level->users->count();
        });
    }
+    public static function countUserNetWorkers($currentUser):Collection
+{
+    //dd(Level_finance::all());
+    return Level_finance::all()->load('users')->keyBy('level')->map(function($level)use($currentUser){
+        return $level->users->where('sub_of',$currentUser->id)->count();
+    });
+}
 
 
 }

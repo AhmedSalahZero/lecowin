@@ -1,15 +1,15 @@
 @extends('user.layout.index')
 @section('title')
-    networks
+    @lang('lang.networks')
 @endsection
 @section('inside_title')
-    netWorkers
+
 @endsection
 @section('header_link')
 
 
     <li>
-        <span>netWorkers</span>
+        <span>@lang('lang.My Network')</span>
     </li>
 @endsection
 
@@ -33,17 +33,27 @@
     <!-- END THEME LAYOUT STYLES -->
 {{--    <link rel="shortcut icon" href="{{asset('favicon.ico')}}" />--}}
     <link rel="stylesheet" href="{{asset('assets/new/css/accordion.css')}}">
+    <link href="{{asset('assets/global/plugins/simple-line-icons/simple-line-icons.min.css')}}" rel="stylesheet" type="text/css" />
+
 
 @endsection
 
 @section('content')
+    @include('partial.toaster')
+
+   @if(Auth()->user()->rule_id != 1)
+       <a href="{{Route('user.networkers.show.my.parents',App()->getLocale())}}" class="btn btn-success css_my_parents_button">
+           @lang('lang.MyParents')
+       </a>
+       @endif
+    <a href="{{Route('user.networkers.show.my.children',[App()->getLocale(),Auth()->user()->id])}}" class="btn btn-success css_my_parents_button">
+        @lang('lang.my children')
+    </a>
 
     {{--Search--}}
 {{--    <div id="sample_1_filter" class="dataTables_filter"><label>Search:<input style="font-size: 17px" type="search" class="form-control input-sm input-small input-inline search_input" placeholder="" aria-controls="sample_1"></label></div>--}}
     @foreach($currentUser->levelNetWorkers() as $levelNetWork)
-    <button class="accordion active">Level  {{$levelNetWork['level']->level}}</button>
-
-
+    <button class="accordion active">@lang('lang.level')  {{$levelNetWork['level']->level}}</button>
     <div class="panel" style="max-height:none;">
         <div class="portlet light ">
 {{--            <div class="portlet-title">--}}
@@ -66,60 +76,131 @@
 
             <div class="portlet-body">
                 <div class="row number-stats margin-bottom-30">
-                    <div class="col-md-3 col-sm-3 col-xs-3">
-                        <div class="stat-left">
-                            <div class="stat-chart">
-                                <!-- do not line break "sparkline_bar" div. sparkline chart has an issue when the container div has line break -->
-                                <div id="sparkline_bar"><canvas width="90" height="45" style="display: inline-block; width: 90px; height: 45px; vertical-align: top;"></canvas></div>
+                    <div class="row widget-row">
+                        <div class="col-md-3">
+                            <!-- BEGIN WIDGET THUMB -->
+                            <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
+                                <h4 class="widget-thumb-heading">@lang('lang.Basic Profit')</h4>
+                                <div class="widget-thumb-wrap">
+                                    <i class="widget-thumb-icon bg-green icon-bulb"></i>
+                                    <div class="widget-thumb-body">
+                                        <span class="widget-thumb-subtitle">@lang('lang.level')</span>
+                                        <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{$currentUser->CountLevelProfit($levelNetWork['level'])}}">
+                                            {{$currentUser->CountLevelProfit($levelNetWork['level'])}}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="stat-number">
-                                <div class="title"> basicProfit </div>
-                                <div class="number"> {{$currentUser->CountLevelProfit($levelNetWork['level'])}} </div>
-                            </div>
-
-
-
+                            <!-- END WIDGET THUMB -->
                         </div>
+                        <div class="col-md-3">
+                            <!-- BEGIN WIDGET THUMB -->
+                            <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
+                                <h4 class="widget-thumb-heading">@lang('lang.Forth Profit')</h4>
+                                <div class="widget-thumb-wrap">
+                                    <i class="widget-thumb-icon bg-red icon-layers"></i>
+                                    <div class="widget-thumb-body">
+                                        <span class="widget-thumb-subtitle">@lang('lang.egp')</span>
+                                        <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{$currentUser->CountLevelForthCost($levelNetWork['level'])}}">
+                                            {{$currentUser->CountLevelForthCost($levelNetWork['level'])}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END WIDGET THUMB -->
+                        </div>
+
+                        <div class="col-md-3">
+                            <!-- BEGIN WIDGET THUMB -->
+                            <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
+                                <h4 class="widget-thumb-heading">@lang('lang.Total Profit')</h4>
+                                <div class="widget-thumb-wrap">
+                                    <i class="widget-thumb-icon bg-purple icon-screen-desktop"></i>
+                                    <div class="widget-thumb-body">
+                                        <span class="widget-thumb-subtitle">@lang('lang.egp')</span>
+                                        <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{$currentUser->levelTotalProfit($levelNetWork['level'])}}">
+                                            {{$currentUser->levelTotalProfit($levelNetWork['level'])}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END WIDGET THUMB -->
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <!-- BEGIN WIDGET THUMB -->
+                            <div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
+                                <h4 class="widget-thumb-heading">@lang('lang.Members')</h4>
+                                <div class="widget-thumb-wrap">
+                                    <i class="widget-thumb-icon bg-blue icon-bar-chart"></i>
+                                    <div class="widget-thumb-body">
+                                        <span class="widget-thumb-subtitle">@lang('lang.person')</span>
+                                        <span class="widget-thumb-body-stat" data-counter="counterup" data-value="{{$currentUser->CountLevelNetWorkers($levelNetWork['level'])}}">
+                                            {{$currentUser->CountLevelNetWorkers($levelNetWork['level'])}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END WIDGET THUMB -->
+                        </div>
+
                     </div>
-                    <div class="col-md-3 col-sm-3 col-xs-3">
-                        <div class="stat-left">
-                            <div class="stat-chart">
-                                <!-- do not line break "sparkline_bar" div. sparkline chart has an issue when the container div has line break -->
-                                <div id="sparkline_bar"><canvas width="90" height="45" style="display: inline-block; width: 90px; height: 45px; vertical-align: top;"></canvas></div>
-                            </div>
-                            <div class="stat-number">
-                                <div class="title"> ForthProfit </div>
-                                <div class="number"> {{$currentUser->CountLevelForthCost($levelNetWork['level'])}} </div>
-                            </div>
+
+{{--                    <div class="col-md-3 col-sm-3 col-xs-3">--}}
+{{--                        <div class="stat-left">--}}
+{{--                            <div class="stat-chart">--}}
+{{--                                <!-- do not line break "sparkline_bar" div. sparkline chart has an issue when the container div has line break -->--}}
+{{--                                <div id="sparkline_bar"><canvas width="90" height="45" style="display: inline-block; width: 90px; height: 45px; vertical-align: top;"></canvas></div>--}}
+{{--                            </div>--}}
+{{--                            <div class="stat-number">--}}
+{{--                                <div class="title"> Basic Profit </div>--}}
+{{--                                <div class="number"> {{$currentUser->CountLevelProfit($levelNetWork['level'])}} </div>--}}
+{{--                            </div>--}}
 
 
 
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-3 col-xs-3">
-                        <div class="stat-right">
-                            <div class="stat-chart">
-                                <!-- do not line break "sparkline_bar" div. sparkline chart has an issue when the container div has line break -->
-                                <div id="sparkline_bar2"><canvas width="90" height="45" style="display: inline-block; width: 90px; height: 45px; vertical-align: top;"></canvas></div>
-                            </div>
-                            <div class="stat-number">
-                                <div class="title"> totalProfit </div>
-                                <div class="number"> {{$currentUser->levelTotalProfit($levelNetWork['level'])}} </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-3 col-xs-3">
-                        <div class="stat-right">
-                            <div class="stat-chart">
-                                <!-- do not line break "sparkline_bar" div. sparkline chart has an issue when the container div has line break -->
-                                <div id="sparkline_bar2"><canvas width="90" height="45" style="display: inline-block; width: 90px; height: 45px; vertical-align: top;"></canvas></div>
-                            </div>
-                            <div class="stat-number">
-                                <div class="title"> members </div>
-                                <div class="number"> {{$currentUser->CountLevelNetWorkers($levelNetWork['level'])}} </div>
-                            </div>
-                        </div>
-                    </div>
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="col-md-3 col-sm-3 col-xs-3">--}}
+{{--                        <div class="stat-left">--}}
+{{--                            <div class="stat-chart">--}}
+{{--                                <!-- do not line break "sparkline_bar" div. sparkline chart has an issue when the container div has line break -->--}}
+{{--                                <div id="sparkline_bar"><canvas width="90" height="45" style="display: inline-block; width: 90px; height: 45px; vertical-align: top;"></canvas></div>--}}
+{{--                            </div>--}}
+{{--                            <div class="stat-number">--}}
+{{--                                <div class="title"> Forth Profit </div>--}}
+{{--                                <div class="number"> {{$currentUser->CountLevelForthCost($levelNetWork['level'])}} </div>--}}
+{{--                            </div>--}}
+
+
+
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="col-md-3 col-sm-3 col-xs-3">--}}
+{{--                        <div class="stat-right">--}}
+{{--                            <div class="stat-chart">--}}
+{{--                                <!-- do not line break "sparkline_bar" div. sparkline chart has an issue when the container div has line break -->--}}
+{{--                                <div id="sparkline_bar2"><canvas width="90" height="45" style="display: inline-block; width: 90px; height: 45px; vertical-align: top;"></canvas></div>--}}
+{{--                            </div>--}}
+{{--                            <div class="stat-number">--}}
+{{--                                <div class="title"> Total Profit </div>--}}
+{{--                                <div class="number"> {{$currentUser->levelTotalProfit($levelNetWork['level'])}} </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="col-md-3 col-sm-3 col-xs-3">--}}
+{{--                        <div class="stat-right">--}}
+{{--                            <div class="stat-chart">--}}
+{{--                                <!-- do not line break "sparkline_bar" div. sparkline chart has an issue when the container div has line break -->--}}
+{{--                                <div id="sparkline_bar2"><canvas width="90" height="45" style="display: inline-block; width: 90px; height: 45px; vertical-align: top;"></canvas></div>--}}
+{{--                            </div>--}}
+{{--                            <div class="stat-number">--}}
+{{--                                <div class="title"> Members </div>--}}
+{{--                                <div class="number"> {{$currentUser->CountLevelNetWorkers($levelNetWork['level'])}} </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
                 </div>
                 <div class="table-scrollable table-scrollable-borderless">
 
@@ -127,11 +208,11 @@
                     <table class="table table-hover table-light">
                         <thead>
                         <tr class="uppercase">
-                            <th colspan="2"> MEMBER </th>
-                            <th> cost </th>
+                            <th colspan="2"> @lang('lang.MEMBER') </th>
+                            <th> @lang('lang.cost') </th>
 {{--                            <th> Reason </th>--}}
-                            <th> level </th>
-                            <th> Join At </th>
+                            <th> @lang('lang.level') </th>
+                            <th> @lang('lang.Join At') </th>
 
                         </tr>
                         </thead>
@@ -142,7 +223,7 @@
                                     <td class="fit">
                                         <img class="user-pic" src="{{asset('storage/'.$netWork->netWorker->image)}}"> </td>
                                     <td>
-                                        <a href="javascript:;" class="primary-link">{{$netWork->netWorker->name}}</a>
+                                        <a href="javascript:;" class="primary-link">{{$netWork->netWorker->first_name .' '.$netWork->netWorker->last_name }}</a>
                                     </td>
 
                                     <td>
@@ -164,7 +245,7 @@
 
     @endforeach
     @if($currentUser->getMaxLevel() != 10)
-        <button class="accordion active">Level {{$currentUser->getMaxLevel() + 1 }}</button>
+        <button class="accordion active">@lang('lang.level') {{$currentUser->getMaxLevel() + 1 }}</button>
 
         <div class="panel" style="max-height:none;">
             <div class="portlet light ">
@@ -179,8 +260,8 @@
 
                                 <tbody>
                                 <tr>
-                                  <h3> this level is closed .. to open it you have to get
-                                  4 networkers of level {{$currentUser->getMaxLevel()}}</h3>
+                                  <h3> @lang('lang.this level is closed .. to open it you have to get
+                                  4 networkers of level') {{$currentUser->getMaxLevel()}}</h3>
                                 </tr>
                                 </tbody>
 
@@ -217,77 +298,80 @@
     <script src="{{asset('assets/layouts/layout/scripts/layout.min.js')}}" type="text/javascript"></script>
     <script src="{{asset('assets/layouts/layout/scripts/demo.min.js')}}" type="text/javascript"></script>
     <script src="{{asset('assets/layouts/global/scripts/quick-sidebar.min.js')}}" type="text/javascript"></script>
-  <script>
-      $(document).ready(function(){
-         $('.dataTables_filter').on('keyup',function(){
-             let query = $('.search_input').val();
-             if(query ==='')
-             {
-                 $('.all_data').show();
-                 return ;
-             }
-              query = query.split(' ').join('%');
-             console.log(query);
-             let lang="{{App()->getLocale()}}";
-             $.ajax({
-                 type:'get',
-                 url:`/${lang}/adminPanel/filterCategories/${query}`,
+{{--  <script>--}}
+{{--      $(document).ready(function(){--}}
+{{--         $('.dataTables_filter').on('keyup',function(){--}}
+{{--             let query = $('.search_input').val();--}}
+{{--             if(query ==='')--}}
+{{--             {--}}
+{{--                 $('.all_data').show();--}}
+{{--                 return ;--}}
+{{--             }--}}
+{{--              query = query.split(' ').join('%');--}}
+{{--             console.log(query);--}}
+{{--             let lang="{{App()->getLocale()}}";--}}
+{{--             $.ajax({--}}
+{{--                 type:'get',--}}
+{{--                 url:`/${lang}/adminPanel/filterCategories/${query}`,--}}
 
 
-                 beforeSend:function (){
+{{--                 beforeSend:function (){--}}
 
-                 },
-                 success:function(data){
-                     $('.all_data').hide();
-                     $('.searched_data').empty().append(data.searchData);
+{{--                 },--}}
+{{--                 success:function(data){--}}
+{{--                     $('.all_data').hide();--}}
+{{--                     $('.searched_data').empty().append(data.searchData);--}}
 
 
 
-                 }
-             }
-             )
-         })
-      });
-  </script>
-  <script>
-        $(document).on('click', '.submit_class', function (e) {
-            e.preventDefault();
-            let id = $(e.target).attr('category_id');
-            let lang = "{{App()->getLocale()}}";
-            $.ajax({
-                type: 'DELETE',
-                url: `/admin/categories/${id}`,
-                success: function (data) {
-                    if(data.status === true)
-                    {
-                        $(`.delete_category_${data.id}`).remove();
-                        $('.alert-success').show();
-                        if(data.count_deleted_child_id >0)
-                        {
-                            for (let i = 0; i <= data.count_deleted_child_id; i++)
-                                $(`.delete_category_${data.deleted_child_id[i]}`).remove();
-                        }
-                        if(data.category_count ===0)
-                        {
-                            $('.no_categories').show();
+{{--                 }--}}
+{{--             }--}}
+{{--             )--}}
+{{--         })--}}
+{{--      });--}}
+{{--  </script>--}}
+{{--  <script>--}}
+{{--        $(document).on('click', '.submit_class', function (e) {--}}
+{{--            e.preventDefault();--}}
+{{--            let id = $(e.target).attr('category_id');--}}
+{{--            let lang = "{{App()->getLocale()}}";--}}
+{{--            $.ajax({--}}
+{{--                type: 'DELETE',--}}
+{{--                url: `/admin/categories/${id}`,--}}
+{{--                success: function (data) {--}}
+{{--                    if(data.status === true)--}}
+{{--                    {--}}
+{{--                        $(`.delete_category_${data.id}`).remove();--}}
+{{--                        $('.alert-success').show();--}}
+{{--                        if(data.count_deleted_child_id >0)--}}
+{{--                        {--}}
+{{--                            for (let i = 0; i <= data.count_deleted_child_id; i++)--}}
+{{--                                $(`.delete_category_${data.deleted_child_id[i]}`).remove();--}}
+{{--                        }--}}
+{{--                        if(data.category_count ===0)--}}
+{{--                        {--}}
+{{--                            $('.no_categories').show();--}}
 
-                        }
+{{--                        }--}}
 
-                        setTimeout(function(){
-                            $('.alert-success').hide();
-                        },3000)
-                    }
-            }
-            });
-        });
+{{--                        setTimeout(function(){--}}
+{{--                            $('.alert-success').hide();--}}
+{{--                        },3000)--}}
+{{--                    }--}}
+{{--            }--}}
+{{--            });--}}
+{{--        });--}}
 
-    </script>
+{{--    </script>--}}
 <script src="{{asset('assets/new/js/accordion.js')}}"></script>
   <script>
           $('li').removeClass('active');
           $('.networker_nav').addClass('active');
 
   </script>
+  <script src="{{asset('assets/global/plugins/counterup/jquery.waypoints.min.js')}}" type="text/javascript"></script>
+  <script src="{{asset('assets/global/plugins/counterup/jquery.counterup.min.js')}}" type="text/javascript"></script>
+
 
 @endsection
 

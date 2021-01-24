@@ -23,6 +23,6 @@ class UserOnly
         elseif (Auth()->check() && Auth()->user()->rule_id ===1)
             return abort(404);
         else
-            return redirect()->route('login.index');
+            return redirect()->route('login.index',App()->getLocale());
     }
 }

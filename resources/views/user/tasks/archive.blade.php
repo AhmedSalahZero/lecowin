@@ -1,16 +1,16 @@
 @extends('user.layout.index')
 
 @section('title')
-   tasks
+   @lang('lang.Archive')
 @endsection
 @section('inside_title')
-     tasks
+{{--    Archive--}}
 @endsection
 @section('header_link')
 
 
     <li>
-        <span>tasks</span>
+        <span>@lang('lang.Archive')</span>
     </li>
 @endsection
 
@@ -38,12 +38,12 @@
 
 @section('content')
 @include('partial.toaster')
-    <div id="sample_1_filter" class="dataTables_filter"><label>Search:<input style="font-size: 17px" type="search" class="form-control input-sm input-small input-inline search_input" placeholder="" aria-controls="sample_1"></label></div>
+{{--    <div id="sample_1_filter" class="dataTables_filter"><label>Search:<input style="font-size: 17px" type="search" class="form-control input-sm input-small input-inline search_input" placeholder="" aria-controls="sample_1"></label></div>--}}
 
     <div class="portlet">
         <div class="portlet-title">
             <div class="caption">
-                <i class="fa fa-bell-o"></i> tasks </div>
+                <i class="fa fa-bell-o"></i> @lang('lang.tasks') </div>
             <div class="tools">
                 <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
                 <a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>
@@ -64,19 +64,19 @@
                             <th>
                                 <i class="fa fa-briefcase"></i> # </th>
                             <th>
-                                <i class="fa fa-briefcase"></i> name </th>
+                                <i class="fa fa-briefcase"></i> @lang('lang.name') </th>
                             <th class="hidden-xs">
-                                <i class="fa fa-user"></i> due_date </th>
+                                <i class="fa fa-user"></i> @lang('lang.due_date') </th>
                             <th class="hidden-xs">
-                                <i class="fa fa-sticky-note"></i> note </th>
+                                <i class="fa fa-sticky-note"></i>  @lang('lang.note')</th>
 
-                            <th> Delete </th>
+                            <th> @lang('lang.delete') </th>
                         </tr>
                         </thead>
                         <tbody>
-                        {{--                    <div class="alert alert-success" style="display: none;text-align: center">--}}
-                        {{--                        <strong>Success!</strong> The task has been deleted.--}}
-                        {{--                    </div>--}}
+                                            <div class="alert alert-success" style="display: none;text-align: center">
+                                                 @lang('lang.The task has been deleted.')
+                                            </div>
                         @if(($tasks->count()))
                             @foreach($tasks as $task)
                                     <tr class="{{'no_archived_tasks'.$task->id}} all_data">
@@ -86,7 +86,7 @@
                                         <td class="hidden-xs"> {{ $task->note}} </td>
                                         <td>
                                             <a class="btn btn-outline btn-circle dark btn-sm black submit_class" data-toggle="modal" data-target="#exampleModalLong3" >
-                                                <i class="fa fa-trash-o" id="sub_fom_data"></i> Delete
+                                                <i class="fa fa-trash-o" id="sub_fom_data"></i> @lang('lang.delete')
                                             </a>
                                         </td>
                                     </tr>
@@ -101,12 +101,12 @@
                                                 <div class="modal-body">
 
                                                     <h5 class="modal-title" id="exampleModalLongTitle">
-                                                        <div class="alert alert-danger" style="font-size: 20px">delete this note Permanently ?</div>
+                                                        <div class="alert alert-danger" style="font-size: 20px">@lang('lang.delete this note Permanently ?')</div>
                                                     </h5>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-danger no_archived_tasks"  data-dismiss="modal" data-id="{{$task->id}}">delete</button>
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('lang.close')</button>
+                                                    <button type="button" class="btn btn-danger no_archived_tasks"  data-dismiss="modal" data-id="{{$task->id}}">@lang('lang.delete')</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -119,7 +119,7 @@
                             <tr >
                                 <th colspan="6" >
                                     <div class="alert alert-info" style="text-align: center">
-                                        <strong>Archive is empty </strong>
+                                        <strong>@lang('lang.Archive is empty') </strong>
                                     </div>
                                 </th>
                             </tr>
@@ -129,7 +129,7 @@
                         <tr style="display: none ;" class="no_archived_tasks">
                             <th colspan="6" >
                                 <div class="alert alert-info" style="text-align: center">
-                                    <strong>archive is empty</strong>
+                                    <strong>@lang('lang.Archive is empty')</strong>
                                 </div>
                             </th>
                         </tr>
@@ -180,40 +180,40 @@
     <script src="{{asset('assets/layouts/layout/scripts/demo.min.js')}}" type="text/javascript"></script>
     <script src="{{asset('assets/layouts/global/scripts/quick-sidebar.min.js')}}" type="text/javascript"></script>
   <script>
-      $(document).ready(function(){
-         $('.dataTables_filter').on('keyup',function(){
-             let query = $('.search_input').val();
-             if(query ==='')
-             {
-                 $('.all_data').show();
-                 return ;
-             }
-              query = query.split(' ').join('%');
-             console.log(query);
-             {{--let lang="{{App()->getLocale()}}";--}}
-             $.ajax({
-                 type:'get',
-                 url:`/${lang}/adminPanel/filterusers/${query}`,
-                 beforeSend:function (){
+      {{--$(document).ready(function(){--}}
+      {{--   $('.dataTables_filter').on('keyup',function(){--}}
+      {{--       let query = $('.search_input').val();--}}
+      {{--       if(query ==='')--}}
+      {{--       {--}}
+      {{--           $('.all_data').show();--}}
+      {{--           return ;--}}
+      {{--       }--}}
+      {{--        query = query.split(' ').join('%');--}}
+      {{--       console.log(query);--}}
+      {{--       let lang="{{App()->getLocale()}}";--}}
+      {{--       $.ajax({--}}
+      {{--           type:'get',--}}
+      {{--           url:`/${lang}/adminPanel/filterusers/${query}`,--}}
+      {{--           beforeSend:function (){--}}
 
-                 },
-                 success:function(data){
-                     $('.all_data').hide();
-                     $('.searched_data').empty().append(data.searchData);
+      {{--           },--}}
+      {{--           success:function(data){--}}
+      {{--               $('.all_data').hide();--}}
+      {{--               $('.searched_data').empty().append(data.searchData);--}}
 
 
 
-                 }
-             }
-             )
-         })
-      });
+      {{--           }--}}
+      {{--       }--}}
+      {{--       )--}}
+      {{--   })--}}
+      {{--});--}}
   </script>
   <script>
         $(document).on('click', '.no_archived_tasks', function (e) {
             e.preventDefault();
             let id = $(e.target).data('id');
-           // let lang = "{{App()->getLocale()}}";
+            let lang = "{{App()->getLocale()}}";
             $.ajax({
 
                 type: 'DELETE',
@@ -221,7 +221,7 @@
                     '_token':"{{csrf_token()}}",
 
                 },
-                url: `/tasks/${id}`,
+                url: '/'+lang+`/tasks/${id}`,
                 success: function (data) {
                     if(data.status === true)
                     {

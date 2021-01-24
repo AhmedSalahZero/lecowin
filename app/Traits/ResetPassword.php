@@ -9,6 +9,7 @@ use App\Mail\SendRestPasswordEmail;
 use App\Models\PasswordReset;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -33,7 +34,7 @@ trait ResetPassword
     }
     protected function generateResetLink($request , $token):string
     {
-        return URL::to('/') . '/password/reset/'.$token->token.'/'.urlencode($request->email);
+        return URL::to('/') . '/'.App::getLocale().'/password/reset/'.$token->token.'/'.urlencode($request->email) ;
     }
 
 }

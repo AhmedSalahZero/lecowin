@@ -1,0 +1,5 @@
+.networkItem{position: relative; border: solid 1px #000; padding: 10px; text-align: center; background: #fff; }
+.networkItem:hover{background: #2b3643; color: #fff;}
+.itemNumber{position: absolute;background: #bc1a1a;top: 0px;right: 0px;padding: 10px;border-radius: 50% !important;color: #fff;}
+.blockItem{ border: solid 2px #000; margin: 10px; padding: 20px; border-radius: 10px !important; background: #2b3643;}
+.networkerPhoto{ height: 100px; background-size:contain; background-repeat: no-repeat; background-position: center; }

@@ -12,8 +12,8 @@
         }
 
         .active, .accordion:hover {
-            background-color: #ccc;
-            color: #444;
+            background-color: #2B3643;
+            color: white;
         }
 
         .panel {
